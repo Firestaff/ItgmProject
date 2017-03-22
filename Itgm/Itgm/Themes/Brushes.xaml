@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="TwitterMainThemeColor">#55acee</Color>
+    <Color x:Key="TwitterMainTextColor">#292f33</Color>
+    <Color x:Key="TwitterAdditionalTextColor">#66757f</Color>
+    <Color x:Key="TwitterLightGrayColor">#e1e8ed</Color>
+    <Color x:Key="TwitterIconColor">#BDC6CC</Color>
+    <Color x:Key="TwitterTweetBackgroundColor">#ffffff</Color>
+    
+
+    <SolidColorBrush x:Key="TwitterMainThemeBrush" Color="{StaticResource TwitterMainThemeColor}"/>
+    <SolidColorBrush x:Key="TwitterMainTextBrush" Color="{StaticResource TwitterMainTextColor}"/>
+    <SolidColorBrush x:Key="TwitterAdditionalTextBrush" Color="{StaticResource TwitterAdditionalTextColor}"/>
+    <SolidColorBrush x:Key="TwitterLightGrayBrush" Color="{StaticResource TwitterLightGrayColor}"/>
+    <SolidColorBrush x:Key="TwitterIconBrush" Color="{StaticResource TwitterIconColor}"/>
+    <SolidColorBrush x:Key="TwitterTweetBackgroundBrush" Color="{StaticResource TwitterTweetBackgroundColor}"/>
+
+    <LinearGradientBrush x:Key="CuttedWhiteFillBrush" StartPoint="0,1" EndPoint="0,0">
+        <GradientStop Color="#FFFFFFFF" Offset="0.2"/>
+        <GradientStop Color="#00FFFFFF" Offset="0.2"/>
+    </LinearGradientBrush>
+
+</ResourceDictionary>

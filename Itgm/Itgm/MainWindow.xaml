@@ -1,0 +1,27 @@
+﻿<Window x:Class="Itgm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:local="clr-namespace:Itgm"
+        xmlns:vm="clr-namespace:Itgm.ViewModels"
+        xmlns:v="clr-namespace:Itgm.Views"
+        
+        Title="Itgm"
+        Icon="Images/TwitterLogo_16.png"
+        WindowStartupLocation="Manual"
+        Style="{StaticResource DefaultWindowStyle}">
+    
+    <Grid>
+        <ContentControl Content="{Binding DataContext, RelativeSource={RelativeSource Self}}"
+                        Name="ContentControl" />
+
+        <TextBlock Text="© Developed by Alexey Chumachenko"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Right"
+                   Margin="5"
+                   FontStyle="Italic"
+                   Foreground="{StaticResource TwitterIconBrush}" />
+    </Grid>
+</Window>

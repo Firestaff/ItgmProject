@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="Itgm.Views.AutorizationPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Itgm"
+             xmlns:v="clr-namespace:Itgm.Views"
+             xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+             MouseUp="UserControl_MouseUp">
+    <Grid>
+        <WrapPanel Orientation="Vertical" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center">
+
+            <Image Source="..\\Images/TwitterLogo_white.png" 
+                   Width="100" Height="100"/>
+
+            <TextBlock Text="{Binding AuthenticationState, Converter={StaticResource ConnectionStateAuthConverter}}"
+                       Margin="0,-15,0,0"
+                       HorizontalAlignment="Center"
+                       FontSize="20"/>
+
+            <TextBox Name="PinCodeTb"
+                     Loaded="PinCodeTb_Loaded"
+                     Width="150" Height="30" 
+                     Margin="0,15,0,0"
+                     ContextMenu="{x:Null}"
+                     Style="{StaticResource PincodeTextBoxStyle}"
+                     Text="{Binding PinCode, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding EnterPinCodeCommand}" Key="Enter" />
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <Button Margin="0,20,0,0" 
+                    Content="Войти" 
+                    Command="{Binding EnterPinCodeCommand}"/>
+
+            <Button Margin="0,100,0,0" 
+                    Content="Что то пошло не так, &#xa;мне нужен новый пинкод" 
+                    Command="{Binding GetNewPincodeCommand}"/>
+        </WrapPanel>
+
+        <v:LongProcessControl Visibility="{Binding IsLongProcessStarted, Converter={StaticResource BoolToVisibilityConverter}}"/>
+    </Grid>
+</UserControl>
