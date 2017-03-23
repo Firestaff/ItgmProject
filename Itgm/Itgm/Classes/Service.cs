@@ -26,7 +26,7 @@ namespace Itgm.Classes
         /// <summary>
         /// Токен приложения.
         /// </summary>
-        //private ITwitterCredentials _appCredentials;
+        private IInstaApi _app;
 
         /// <summary>
         /// Открытый ключ приложения.
@@ -50,69 +50,49 @@ namespace Itgm.Classes
         /// </summary>
         public Service()
         {
-            //ExceptionHandler.SwallowWebExceptions = false;
-            //_appCredentials = new TwitterCredentials(_consumerKey, _consumerSecret);
             return;
-            // create user session data and provide login details
-            var userSession = new UserSessionData
-            {
-                UserName = "iesopoval",
-                Password = "1234567u"
-            };
-            // create new InstaApi instance using Builder
-            var instaApi = new InstaApiBuilder()
-                .SetUser(userSession)
-                .Build();
-            // login
-            var logInResult = instaApi.Login();
-            if (!logInResult.Succeeded) { Console.WriteLine($"Unable to login: {logInResult.Info}"); }
-            else
-            {
-                // get currently logged in user
-                var currentUser = instaApi.GetCurrentUser().Value;
-                Console.WriteLine($"Logged in: username - {currentUser.UserName}, full name - {currentUser.FullName}");
-                //var b = _instaApi.GetRecentActivity(1);
-                //var c = _instaApi.(1);
 
-                var userMedia = instaApi.GetUserMedia(currentUser.UserName, 1).Value;
-                var d = userMedia[0].InstaIdentifier;
-                var z = Task.Run(async () => await instaApi.GetMediaCommentsAsync(d, 1)).Result;
-                //var z = Task.Run(async ()=> await _instaApi.GetMediaByCode("48B3kA2skbFbEbtKS/NLDq4HAUk=")).Result;
+            //var b = _instaApi.GetRecentActivity(1);
+            //var c = _instaApi.(1);
+
+            //var userMedia = _app.GetUserMedia(currentUser.UserName, 1).Value;
+            //var d = userMedia[0].InstaIdentifier;
+            //var z = Task.Run(async () => await _app.GetMediaCommentsAsync(d, 1)).Result;
+            //var z = Task.Run(async ()=> await _instaApi.GetMediaByCode("48B3kA2skbFbEbtKS/NLDq4HAUk=")).Result;
 
 
-                var mails = instaApi.GetDirectInbox();
-                //var a = _instaApi.GetDirectInboxThread("340282366841710300949128133717524366136");
-                //var e = _instaApi.GetUserRequestersAsync();
+            var mails = _app.GetDirectInbox();
+            //var a = _instaApi.GetDirectInboxThread("340282366841710300949128133717524366136");
+            //var e = _instaApi.GetUserRequestersAsync();
 
 
-                //// get followers 
-                //var followers = _instaApi.GetUserFollowersAsync(currentUser.UserName, 5).Result.Value;
-                //Console.WriteLine($"Count of followers [{currentUser.UserName}]:{followers.Count}");
-                //// get user's media 
-                //var currentUserMedia = _instaApi.GetUserMedia(currentUser.UserName, 5);
-                //if (currentUserMedia.Succeeded)
-                //{
-                //    Console.WriteLine($"Media count [{currentUser.UserName}]: {currentUserMedia.Value.Count}");
-                //    foreach (var media in currentUserMedia.Value) Console.WriteLine($"Media [{currentUser.UserName}]: {media.Caption.Text}, {media.Code}, likes: {media.LikesCount}, image link: {media.Images.LastOrDefault()?.Url}");
-                //}
+            //// get followers 
+            //var followers = _instaApi.GetUserFollowersAsync(currentUser.UserName, 5).Result.Value;
+            //Console.WriteLine($"Count of followers [{currentUser.UserName}]:{followers.Count}");
+            //// get user's media 
+            //var currentUserMedia = _instaApi.GetUserMedia(currentUser.UserName, 5);
+            //if (currentUserMedia.Succeeded)
+            //{
+            //    Console.WriteLine($"Media count [{currentUser.UserName}]: {currentUserMedia.Value.Count}");
+            //    foreach (var media in currentUserMedia.Value) Console.WriteLine($"Media [{currentUser.UserName}]: {media.Caption.Text}, {media.Code}, likes: {media.LikesCount}, image link: {media.Images.LastOrDefault()?.Url}");
+            //}
 
-                ////get user feed, first 5 pages
-                //var userFeed = _instaApi.GetUserTimelineFeed(5);
-                //if (userFeed.Succeeded)
-                //{
-                //    Console.WriteLine($"Feed items (in {userFeed.Value.Pages} pages) [{currentUser.UserName}]: {userFeed.Value.MediaItemsCount}");
-                //    foreach (var media in userFeed.Value.Medias) Console.WriteLine($"Feed item - code:{media.Code}, likes: {media.LikesCount}");
-                //}
-                //// get tag feed, first 5 pages
-                //var tagFeed = _instaApi.GetTagFeed("gm", 5);
-                //if (userFeed.Succeeded)
-                //{
-                //    Console.WriteLine($"Tag feed items (in {tagFeed.Value.Pages} pages) [{currentUser.UserName}]: {tagFeed.Value.MediaItemsCount}");
-                //    foreach (var media in tagFeed.Value.Medias) Console.WriteLine($"Tag feed item - code: {media.Code}, likes: {media.LikesCount}");
-                //}
-                var logoutResult = instaApi.Logout();
-                if (logoutResult.Value) Console.WriteLine("Logout succeed");
-            }
+            ////get user feed, first 5 pages
+            //var userFeed = _instaApi.GetUserTimelineFeed(5);
+            //if (userFeed.Succeeded)
+            //{
+            //    Console.WriteLine($"Feed items (in {userFeed.Value.Pages} pages) [{currentUser.UserName}]: {userFeed.Value.MediaItemsCount}");
+            //    foreach (var media in userFeed.Value.Medias) Console.WriteLine($"Feed item - code:{media.Code}, likes: {media.LikesCount}");
+            //}
+            //// get tag feed, first 5 pages
+            //var tagFeed = _instaApi.GetTagFeed("gm", 5);
+            //if (userFeed.Succeeded)
+            //{
+            //    Console.WriteLine($"Tag feed items (in {tagFeed.Value.Pages} pages) [{currentUser.UserName}]: {tagFeed.Value.MediaItemsCount}");
+            //    foreach (var media in tagFeed.Value.Medias) Console.WriteLine($"Tag feed item - code: {media.Code}, likes: {media.LikesCount}");
+            //}
+            var logoutResult = _app.Logout();
+            if (logoutResult.Value) Console.WriteLine("Logout succeed");
         }
 
         /// <summary>
@@ -130,26 +110,26 @@ namespace Itgm.Classes
         /// <summary>
         /// Попытка авторизации пользователя.
         /// </summary>
-        /// <param name="pinCode">Пин-код, выданный твиттером.</param>
-        public async Task AuthenticateAsync(string pinCode)
+        /// <param name="login">Логин.</param>
+        /// <param name="password">Пароль.</param>
+        public async Task AuthenticateAsync(string login, string password)
         {
-            // Запрос к серверу для получения токенов
-            //ITwitterCredentials userCredentials = await Task.Run(() => GetAccessToken(pinCode));
+            // create user session data and provide login details
+            var userSession = new UserSessionData
+            {
+                UserName = login,
+                Password = password
+            };
 
-            //if (userCredentials == null)
-            //{
-            //    return;
-            //}
+            // create new InstaApi instance using Builder
+            var _app = new InstaApiBuilder()
+                .SetUser(userSession)
+                .Build();
 
-            //// Запоминаем полученные значения для следующих запросов
-            //Auth.Credentials = Auth.ApplicationCredentials;
-            //Auth.Credentials.AccessToken = userCredentials.AccessToken;
-            //Auth.Credentials.AccessTokenSecret = userCredentials.AccessTokenSecret;
+            // login
+            var logInResult = await _app.LoginAsync();
 
-            //TweetinviConfig.APPLICATION_RATELIMIT_TRACKER_OPTION = RateLimitTrackerOptions.TrackOnly;
-            //TweetinviConfig.CURRENT_RATELIMIT_TRACKER_OPTION = RateLimitTrackerOptions.TrackOnly;
-
-            //_loggedUser = Tweetinvi.User.GetLoggedUser();
+            SetState(logInResult.Info.Message);
         }
 
         /// <summary>

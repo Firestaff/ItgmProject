@@ -185,7 +185,7 @@
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <Grid>
                         <TextBlock x:Name="Watermark"
-                                   Text="p   i   n   c   o   d   e"
+                                   Text="{TemplateBinding Name}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Margin="5,0,5,-5"

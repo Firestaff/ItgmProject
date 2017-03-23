@@ -13,32 +13,41 @@
                    VerticalAlignment="Center">
 
             <Image Source="..\\Images/TwitterLogo_white.png" 
-                   Width="100" Height="100"/>
+                   Width="1000" Height="100"/>
 
-            <TextBlock Text="{Binding AuthenticationState, Converter={StaticResource ConnectionStateAuthConverter}}"
+            <!--<TextBlock Text="{Binding AuthenticationState, Converter={StaticResource ConnectionStateAuthConverter}}"
                        Margin="0,-15,0,0"
                        HorizontalAlignment="Center"
-                       FontSize="20"/>
+                       FontSize="25"/>-->
 
-            <TextBox Name="PinCodeTb"
-                     Loaded="PinCodeTb_Loaded"
-                     Width="150" Height="30" 
-                     Margin="0,15,0,0"
+            <TextBox Name="login"
+                     Width="200" Height="30" 
+                     Margin="0,50,0,0"
                      ContextMenu="{x:Null}"
                      Style="{StaticResource PincodeTextBoxStyle}"
-                     Text="{Binding PinCode, UpdateSourceTrigger=PropertyChanged}">
+                     Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
-                    <KeyBinding Command="{Binding EnterPinCodeCommand}" Key="Enter" />
+                    <KeyBinding Command="{Binding EnterCredentialsCommand}" Key="Enter" />
                 </TextBox.InputBindings>
             </TextBox>
 
-            <Button Margin="0,20,0,0" 
+            <TextBox Name="password"
+                     Width="200"
+                     Height="30"
+                     Margin="0,20,0,0"
+                     ContextMenu="{x:Null}"
+                     Style="{StaticResource PincodeTextBoxStyle}"
+                     Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding EnterCredentialsCommand}"
+                                Key="Enter" />
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <Button Margin="0,30,0,0" 
                     Content="Войти" 
                     Command="{Binding EnterPinCodeCommand}"/>
 
-            <Button Margin="0,100,0,0" 
-                    Content="Что то пошло не так, &#xa;мне нужен новый пинкод" 
-                    Command="{Binding GetNewPincodeCommand}"/>
         </WrapPanel>
 
         <v:LongProcessControl Visibility="{Binding IsLongProcessStarted, Converter={StaticResource BoolToVisibilityConverter}}"/>

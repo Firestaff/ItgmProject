@@ -26,9 +26,14 @@ namespace Itgm.ViewModels
         private bool _isLongProcessStarted;
 
         /// <summary>
-        /// Пин-код.
+        /// Логин.
         /// </summary>
-        private string _pinCode;
+        private string _login;
+
+        /// <summary>
+        /// Пароль.
+        /// </summary>
+        private string _password;
 
         #endregion
 
@@ -39,32 +44,45 @@ namespace Itgm.ViewModels
         /// <param name="resolveView">Метод отрисовки нового представления.</param>
         public AuthenticationViewModel(IService service, Action<ViewTypes> resolveView) : base(service, resolveView)
         {
-            EnterPinCodeCommand = new ActionCommand(OnEnterPinCodeAsync);
-            GetNewPincodeCommand = new ActionCommand(OnGetPinCodeAsync);
+            EnterCredentialsCommand = new ActionCommand(OnEnterPinCodeAsync);
         }
 
         #region Properties
 
         /// <summary>
-        /// Пин-код.
+        /// Логин.
         /// </summary>
-        public string PinCode
+        public string Login
         {
             get
             {
-                return _pinCode;
+                return _login;
             }
             set
             {
-                if (_pinCode != value)
+                if (_login != value)
                 {
-                    if (AuthenticationState == WebExceptionStatus.TrustFailure)
-                    {
-                        AuthenticationState = 0;
-                    }
+                    _login = value;
+                    OnPropertyChanged("Login");
+                }
+            }
+        }
 
-                    _pinCode = value;
-                    OnPropertyChanged("PinCode");
+        /// <summary>
+        /// Пароль.
+        /// </summary>
+        public string Password
+        {
+            get
+            {
+                return _password;
+            }
+            set
+            {
+                if (_password != value)
+                {
+                    _password = value;
+                    OnPropertyChanged("Password");
                 }
             }
         }
@@ -112,17 +130,9 @@ namespace Itgm.ViewModels
         #region Commands
 
         /// <summary>
-        /// Команда ввода пин-кода.
+        /// Команда ввода параметров авторизации.
         /// </summary>
-        public ICommand EnterPinCodeCommand
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Команда получения пин-кода от твиттера.
-        /// </summary>
-        public ICommand GetNewPincodeCommand
+        public ICommand EnterCredentialsCommand
         {
             get; private set;
         }
@@ -135,23 +145,26 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            PinCode = null;
+            Login = null;
+            Password = null;
             IsLongProcessStarted = false;
             AuthenticationState = WebExceptionStatus.Success;
         }
 
         /// <summary>
-        /// Передает пин-код в сервис и получает результат запроса авторизации.
+        /// Передает введенные данные в сервис и получает результат запроса авторизации.
         /// </summary>
         private async void OnEnterPinCodeAsync()
         {
-            if (string.IsNullOrWhiteSpace(PinCode))
+
+            if (string.IsNullOrWhiteSpace(Login) || 
+                string.IsNullOrWhiteSpace(Password))
             {
                 return;
             }
 
             IsLongProcessStarted = true;
-            await _service.AuthenticateAsync(PinCode);
+            await _service.AuthenticateAsync(_login, _password);
             IsLongProcessStarted = false;
 
             AuthenticationState = _service.AuthenticationState;
@@ -160,19 +173,6 @@ namespace Itgm.ViewModels
                 ResolveNewView(ViewTypes.Content);
             }
         }
-
-        /// <summary>
-        /// Вызывает запрос на получение пин-кода из твиттера.
-        /// </summary>
-        private async void OnGetPinCodeAsync()
-        {
-            IsLongProcessStarted = true;
-            await _service.GetPincodeAsync();
-            IsLongProcessStarted = false;
-
-            AuthenticationState = _service.AuthenticationState;
-        }
-
         #endregion
     }
 }

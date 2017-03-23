@@ -17,16 +17,16 @@ namespace Itgm.Converters
             switch (state)
             {
                 case WebExceptionStatus.Success:
-                    return "Введите PinCode";
+                    return "Вход";
 
                 case WebExceptionStatus.TrustFailure:
-                    return "Введен неверный PinCode!";
+                    return "Данные неверны!";
 
                 case WebExceptionStatus.ConnectFailure:
                     return "Сервер не отвечает :(";
 
                 default:
-                    return "Введите PinCode";
+                    return "Вход";
             }
         }
 

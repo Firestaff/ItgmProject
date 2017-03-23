@@ -29,7 +29,7 @@ namespace Itgm.Interfaces
         /// Попытка авторизации пользователя.
         /// </summary>
         /// <param name="pinCode">Пин-код, выданный твиттером.</param>
-        Task AuthenticateAsync(string pinCode);
+        Task AuthenticateAsync(string login, string password);
 
         /// <summary>
         /// Получение подписчиков и подписок для пользователя с заданным идентификатором.

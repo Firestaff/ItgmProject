@@ -42,7 +42,7 @@ namespace Itgm
             _mainWindow = new MainWindow();
             _service = new Service();
 
-            // Отрисовываем страницу получения пин-кода
+            // Отрисовываем страницу получения логина/пароля
             ResolveViewModel(ViewTypes.Auth);
 
             _mainWindow.Show();

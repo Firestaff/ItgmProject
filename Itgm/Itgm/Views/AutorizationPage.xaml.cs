@@ -15,11 +15,6 @@ namespace Itgm.Views
             InitializeComponent();
         }
 
-        private void PinCodeTb_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.PinCodeTb.Focus();
-        }
-
         private void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (Keyboard.FocusedElement is TextBox)
