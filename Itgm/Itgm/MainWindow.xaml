@@ -3,19 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        
         xmlns:local="clr-namespace:Itgm"
         xmlns:vm="clr-namespace:Itgm.ViewModels"
         xmlns:v="clr-namespace:Itgm.Views"
-        
         Title="Itgm"
-        Icon="Images/TwitterLogo_16.png"
-        WindowStartupLocation="Manual"
-        Style="{StaticResource DefaultWindowStyle}">
+        Icon="Images/itgm_16.png"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        MouseDown="Window_MouseDown">
     
     <Grid>
         <ContentControl Content="{Binding DataContext, RelativeSource={RelativeSource Self}}"
-                        Name="ContentControl" />
+                        Name="ContentControl" 
+                        Margin="0"/>
 
         <TextBlock Text="© Developed by Alexey Chumachenko"
                    VerticalAlignment="Bottom"
@@ -24,4 +24,68 @@
                    FontStyle="Italic"
                    Foreground="{StaticResource TwitterIconBrush}" />
     </Grid>
+    <Window.Style>
+        <Style BasedOn="{StaticResource DefaultWindowStyle}" TargetType="{x:Type Window}">
+            <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <Grid>
+                        <Border x:Name="MainBorder"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}">
+                            <Grid>
+                                <AdornerDecorator VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      ContentStringFormat="{TemplateBinding ContentStringFormat}" />
+                                </AdornerDecorator>
+                                
+                                <Border x:Name="PART_TITLEBAR"
+                                        Margin="0,0,0,0"
+                                        VerticalAlignment="Top"
+                                        HorizontalAlignment="Right"
+                                        Background="Transparent">
+                                    <DockPanel LastChildFill="False">
+                                        <Button x:Name="PART_CLOSE"
+                                                DockPanel.Dock="Right"
+                                                VerticalAlignment="Center"
+                                                Margin="5"
+                                                Height="20"
+                                                Width="20"
+                                                Content="x"
+                                                Click="PART_CLOSE_Click">
+                                        </Button>
+                                        <Button x:Name="PART_MAXIMIZE_RESTORE"
+                                                DockPanel.Dock="Right"
+                                                Margin="5"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Height="20"
+                                                Width="20"
+                                                Content="□"
+                                                Click="PART_MAXIMIZE_RESTORE_Click">
+                                        </Button>
+                                        <Button x:Name="PART_MINIMIZE"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Bottom"
+                                                VerticalContentAlignment="Bottom"
+                                                Margin="5"
+                                                DockPanel.Dock="Right"
+                                                Height="20"
+                                                Width="20"
+                                                Content="━"
+                                                Click="PART_MINIMIZE_Click">
+                                        </Button>
+                                    </DockPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        </Style>
+        
+    </Window.Style>
 </Window>

@@ -20,16 +20,22 @@ namespace Itgm.Interfaces
         /// </summary>
         WebExceptionStatus AuthenticationState { get; }
 
-        /// <summary>
-        /// Событие оповещающее о том, что кончились запросы.
-        /// </summary>
+        ///// <summary>
+        ///// Событие оповещающее о том, что кончились запросы.
+        ///// </summary>
         //event EventHandler<RateLimitEventArgs> RateLimitOver;
 
         /// <summary>
         /// Попытка авторизации пользователя.
         /// </summary>
-        /// <param name="pinCode">Пин-код, выданный твиттером.</param>
-        Task AuthenticateAsync(string login, string password);
+        /// <param name="login">Логин.</param>
+        /// <param name="password">Пароль.</param>
+        Task LoginAsync(string login, string password);
+
+        /// <summary>
+        /// Выход из системы.
+        /// </summary>
+        Task LogoutAsync();
 
         /// <summary>
         /// Получение подписчиков и подписок для пользователя с заданным идентификатором.

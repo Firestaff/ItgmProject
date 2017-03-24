@@ -17,16 +17,16 @@ namespace Itgm.Converters
             switch (state)
             {
                 case WebExceptionStatus.Success:
-                    return "Вход";
+                    return "";
 
                 case WebExceptionStatus.TrustFailure:
-                    return "Данные неверны!";
+                    return "Неверный логин или пароль!";
 
                 case WebExceptionStatus.ConnectFailure:
                     return "Сервер не отвечает :(";
 
                 default:
-                    return "Вход";
+                    return "";
             }
         }
 

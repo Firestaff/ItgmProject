@@ -49,6 +49,16 @@ namespace Itgm
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            _service.LogoutAsync();
+        }
+
+        /// <summary>
         /// Присваивает новый дата контекст в зависимости от переданного параметра.
         /// </summary>
         /// <param name="viewType">Тип вью для отображения.</param>

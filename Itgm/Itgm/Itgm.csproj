@@ -149,17 +149,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Graph.png" />
-    <Resource Include="Images\TwitterLogo.png" />
-    <Resource Include="Images\TwitterLogo_16.png" />
-    <Resource Include="Images\TwitterLogo_32.png" />
-    <Resource Include="Images\TwitterLogo_48.png" />
-    <Resource Include="Images\TwitterLogo_white.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InstaSharper\InstaSharper.csproj">
       <Project>{d0d35b2c-3a60-41c6-855b-3e7f42635217}</Project>
       <Name>InstaSharper</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\itgm.png" />
+    <Resource Include="Images\itgm_16.png" />
+    <Resource Include="Images\itgm_32.png" />
+    <Resource Include="Images\itgm_48.png" />
+    <Resource Include="Images\itgm_logo_white.png" />
+    <Resource Include="Images\itgm_split_white.png" />
+    <Resource Include="Images\itgm_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background1.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

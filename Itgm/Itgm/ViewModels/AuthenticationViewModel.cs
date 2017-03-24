@@ -44,7 +44,7 @@ namespace Itgm.ViewModels
         /// <param name="resolveView">Метод отрисовки нового представления.</param>
         public AuthenticationViewModel(IService service, Action<ViewTypes> resolveView) : base(service, resolveView)
         {
-            EnterCredentialsCommand = new ActionCommand(OnEnterPinCodeAsync);
+            EnterCredentialsCommand = new ActionCommand(OnEnterCredentialsAsync);
         }
 
         #region Properties
@@ -154,17 +154,17 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Передает введенные данные в сервис и получает результат запроса авторизации.
         /// </summary>
-        private async void OnEnterPinCodeAsync()
+        private async void OnEnterCredentialsAsync()
         {
 
-            if (string.IsNullOrWhiteSpace(Login) || 
-                string.IsNullOrWhiteSpace(Password))
+            if (string.IsNullOrWhiteSpace(_login) || 
+                string.IsNullOrWhiteSpace(_password))
             {
                 return;
             }
 
             IsLongProcessStarted = true;
-            await _service.AuthenticateAsync(_login, _password);
+            await _service.LoginAsync(_login, _password);
             IsLongProcessStarted = false;
 
             AuthenticationState = _service.AuthenticationState;

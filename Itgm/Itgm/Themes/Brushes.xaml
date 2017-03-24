@@ -21,4 +21,5 @@
         <GradientStop Color="#00FFFFFF" Offset="0.2"/>
     </LinearGradientBrush>
 
+    <ImageBrush x:Key="ItgmBackgroundBrush" ImageSource="..\\Images/background.jpg" />
 </ResourceDictionary>

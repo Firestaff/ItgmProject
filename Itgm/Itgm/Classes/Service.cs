@@ -112,7 +112,7 @@ namespace Itgm.Classes
         /// </summary>
         /// <param name="login">Логин.</param>
         /// <param name="password">Пароль.</param>
-        public async Task AuthenticateAsync(string login, string password)
+        public async Task LoginAsync(string login, string password)
         {
             // create user session data and provide login details
             var userSession = new UserSessionData
@@ -129,7 +129,12 @@ namespace Itgm.Classes
             // login
             var logInResult = await _app.LoginAsync();
 
-            SetState(logInResult.Info.Message);
+            SetState(logInResult.Info);
+        }
+
+        public async Task LogoutAsync()
+        {
+            _app.LogoutAsync();
         }
 
         /// <summary>
@@ -287,7 +292,7 @@ namespace Itgm.Classes
         /// <returns>Статус выполнения запроса.</returns>
         private bool InitializeCredentials()
         {
-            SetSucessState();
+            SetSuccessState();
             //Auth.ApplicationCredentials = null;
 
             //try
@@ -330,18 +335,21 @@ namespace Itgm.Classes
         /// Установка состояния авторизации в зависимости от сообщения.
         /// </summary>
         /// <param name="message">Сообщение об ошибке или успешном выполнении запроса.</param>
-        private void SetState(string message)
+        private void SetState(ResultInfo result)
         {
+            var message = result.Message;
+
             if (message.StartsWith("Unable to connect") ||
                 message.StartsWith("The remote name could not be resolved"))
             {
                 AuthenticationState = WebExceptionStatus.ConnectFailure;
             }
-            else if (message.StartsWith("Unauthorized"))
+            else if (message.StartsWith("The password you entered is incorrect. Please try again."))
             {
                 AuthenticationState = WebExceptionStatus.TrustFailure;
             }
-            else if (message.StartsWith("Success"))
+            else if (result.Exception == null 
+                     && String.IsNullOrEmpty(message))
             {
                 AuthenticationState = WebExceptionStatus.Success;
             }
@@ -354,9 +362,9 @@ namespace Itgm.Classes
         /// <summary>
         /// Установка успешного состояния авторизации.
         /// </summary>
-        private void SetSucessState()
+        private void SetSuccessState()
         {
-            SetState("Success");
+            AuthenticationState = WebExceptionStatus.Success;
         }
 
         #endregion
