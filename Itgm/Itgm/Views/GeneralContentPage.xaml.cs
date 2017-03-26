@@ -12,11 +12,11 @@ namespace Itgm.Views
     /// <summary>
     /// Interaction logic for TweetsPage.xaml
     /// </summary>
-    public partial class TweetsPage : UserControl
+    public partial class GeneralContentPage : UserControl
     {
         private ScrollViewer _scrollViewer;
 
-        public TweetsPage()
+        public GeneralContentPage()
         {
             InitializeComponent();
         }

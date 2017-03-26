@@ -5,7 +5,6 @@
     /// </summary>
     public enum ViewTypes
     {
-        //GetPinCode,
         Auth,
         Content
     }

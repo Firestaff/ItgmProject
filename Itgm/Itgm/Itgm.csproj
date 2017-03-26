@@ -73,8 +73,8 @@
     <Compile Include="Views\LongProcessControl.xaml.cs">
       <DependentUpon>LongProcessControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TweetsPage.xaml.cs">
-      <DependentUpon>TweetsPage.xaml</DependentUpon>
+    <Compile Include="Views\GeneralContentPage.xaml.cs">
+      <DependentUpon>GeneralContentPage.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -116,7 +116,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TweetsPage.xaml">
+    <Page Include="Views\GeneralContentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

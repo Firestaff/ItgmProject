@@ -1,18 +1,22 @@
 ﻿<UserControl x:Class="Itgm.Views.ContentPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             
              xmlns:local="clr-namespace:Itgm"
              xmlns:v="clr-namespace:Itgm.Views"
+             xmlns:vm="clr-namespace:Itgm.ViewModels"
              xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
-             mc:Ignorable="d">
+             
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:ContentViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{StaticResource TwitterTweetBackgroundBrush}">
+        <Grid Grid.Row="0" Background="Transparent">
             <Grid.Resources>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DefaultButtonStyle}"/>
             </Grid.Resources>
@@ -23,7 +27,7 @@
                   Width="22">
                 <Border Name="AvatarImageMask" 
                         CornerRadius="4" 
-                        Background="{StaticResource TwitterTweetBackgroundBrush}"/>
+                        Background="Transparent"/>
                 <Image Source="{Binding User.ProfileImageUrl, Mode=OneWay, IsAsync=True}" 
                        Name="ContentImage">
                     <Image.OpacityMask>
@@ -44,6 +48,8 @@
             <Button Command="{Binding UpdateCommand}"
                     HorizontalAlignment="Center" 
                     FontSize="14"
+                    Background="Transparent"
+                    Foreground="White"
                     Content="Обновить"/>
 
             <CheckBox Style="{StaticResource AnimatedSwitch}" 
@@ -55,6 +61,8 @@
 
             <Button Command="{Binding ReloginCommand}"
                     HorizontalAlignment="Right" 
+                    Background="Transparent"
+                    Foreground="White"
                     Margin="0,0,5,0"
                     Content="Выйти"/>
         </Grid>

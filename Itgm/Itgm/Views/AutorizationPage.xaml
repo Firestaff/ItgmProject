@@ -9,14 +9,15 @@
              xmlns:vm="clr-namespace:Itgm.ViewModels"
              
              mc:Ignorable="d"
-             
              d:DataContext="{d:DesignInstance vm:AuthenticationViewModel}"
+             
              Background="Transparent"
-             Height="600"
-             Width="405"
+             Height="500"
+             Width="336"
              MouseDown="UserControl_MouseUp">
+    
     <Grid Background="Transparent">
-        <WrapPanel Orientation="Vertical" Background="Transparent"
+        <WrapPanel Orientation="Vertical" 
                    HorizontalAlignment="Center" 
                    VerticalAlignment="Center">
             
@@ -59,6 +60,6 @@
 
         </WrapPanel>
 
-        <v:LongProcessControl Visibility="{Binding IsLongProcessStarted, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        <v:LongProcessControl Visibility="Visible"/>
     </Grid>
 </UserControl>

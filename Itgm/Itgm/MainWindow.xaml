@@ -53,7 +53,7 @@
                                                 Margin="5"
                                                 Height="20"
                                                 Width="20"
-                                                Content="x"
+                                                Content="X"
                                                 Click="PART_CLOSE_Click">
                                         </Button>
                                         <Button x:Name="PART_MAXIMIZE_RESTORE"
@@ -74,7 +74,7 @@
                                                 DockPanel.Dock="Right"
                                                 Height="20"
                                                 Width="20"
-                                                Content="━"
+                                                Content="_"
                                                 Click="PART_MINIMIZE_Click">
                                         </Button>
                                     </DockPanel>
