@@ -174,8 +174,8 @@ namespace InstaSharper.API
                         JsonConvert.DeserializeObject<InstaLoginResponse>(json);
                     IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName == _user.UserName;
                     var converter = ConvertersFabric.GetUserConverter(loginInfo.User);
-                    _user.LoggedInUder = converter.Convert();
-                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_requestMessage.phone_id}";
+                    _user.LoggedInUser = converter.Convert();
+                    _user.RankToken = $"{_user.LoggedInUser.Pk}_{_requestMessage.phone_id}";
                     return Result.Success(true);
                 }
                 else
@@ -381,12 +381,12 @@ namespace InstaSharper.API
             var instaUri = UriCreator.GetCurrentUserUri();
             dynamic jsonObject = new JObject();
             jsonObject._uuid = _deviceInfo.DeviceGuid;
-            jsonObject._uid = _user.LoggedInUder.Pk;
+            jsonObject._uid = _user.LoggedInUser.Pk;
             jsonObject._csrftoken = _user.CsrfToken;
             var fields = new Dictionary<string, string>
             {
                 {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                {"_uid", _user.LoggedInUder.Pk},
+                {"_uid", _user.LoggedInUser.Pk},
                 {"_csrftoken", _user.CsrfToken}
             };
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);

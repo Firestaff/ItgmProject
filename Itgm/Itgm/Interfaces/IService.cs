@@ -44,10 +44,7 @@ namespace Itgm.Interfaces
         /// <returns>Список подписчиков и подписок(не содержит дубликатов).</returns>
         IEnumerable<long> GetFollowersAndSubsIds(long userId);
 
-        /// <summary>
-        /// Попытка получить пин-код от твиттера.
-        /// </summary>
-        Task GetPincodeAsync();
+        Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId);
 
         /// <summary>
         /// Запрос твитов для залогиненного пользователя.
@@ -55,7 +52,7 @@ namespace Itgm.Interfaces
         /// <param name="maxId">Максимальный идентификатор твита с которого необходимо провести запрос.</param>
         /// <param name="count">Количество запрашиваемых твитов.</param>
         /// <returns>Коллекция твитов.</returns>
-        Task<IEnumerable<InstaComment>> GetTweetsAsync();
+        Task<IEnumerable<InstaMedia>> GetMediasAsync();
 
         /// <summary>
         /// Получение залогиненного пользователя.

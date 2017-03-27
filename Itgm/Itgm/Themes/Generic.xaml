@@ -21,8 +21,8 @@
     <DataTemplate DataType="{x:Type vm:ContentViewModel}">
         <v:ContentPage/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type vm:TweetsViewModel}">
-        <v:GeneralContentPage />
+    <DataTemplate DataType="{x:Type vm:CommentsViewModel}">
+        <v:CommentsView />
     </DataTemplate>
 
     <!--Control templates-->

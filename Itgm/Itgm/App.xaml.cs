@@ -37,13 +37,14 @@ namespace Itgm
         /// <summary>
         /// Обработчик загрузки окна.
         /// </summary>
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
             _mainWindow = new MainWindow();
             _service = new Service();
+            await _service.LoginAsync("iesopoval", "1234567u");
 
             // Отрисовываем страницу получения логина/пароля
-            ResolveViewModel(ViewTypes.Auth);
+            ResolveViewModel(ViewTypes.Content);
 
             _mainWindow.Show();
         }
@@ -53,9 +54,9 @@ namespace Itgm
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Application_Exit(object sender, ExitEventArgs e)
+        private async void Application_Exit(object sender, ExitEventArgs e)
         {
-            _service.LogoutAsync();
+            await _service.LogoutAsync();
         }
 
         /// <summary>

@@ -20,7 +20,7 @@
         <TextBlock Text="© Developed by Alexey Chumachenko"
                    VerticalAlignment="Bottom"
                    HorizontalAlignment="Right"
-                   Margin="5"
+                   Margin="0,0,6,2"
                    FontStyle="Italic"
                    Foreground="{StaticResource TwitterIconBrush}" />
     </Grid>
@@ -35,13 +35,12 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 Background="{TemplateBinding Background}">
                             <Grid>
-                                <AdornerDecorator VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                    <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                      Content="{TemplateBinding Content}"
-                                                      ContentStringFormat="{TemplateBinding ContentStringFormat}" />
-                                </AdornerDecorator>
-                                
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
                                 <Border x:Name="PART_TITLEBAR"
+                                        Grid.Row="0"
                                         Margin="0,0,0,0"
                                         VerticalAlignment="Top"
                                         HorizontalAlignment="Right"
@@ -79,6 +78,12 @@
                                         </Button>
                                     </DockPanel>
                                 </Border>
+                                
+                                <AdornerDecorator Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      ContentStringFormat="{TemplateBinding ContentStringFormat}" />
+                                </AdornerDecorator>
                             </Grid>
                         </Border>
                     </Grid>

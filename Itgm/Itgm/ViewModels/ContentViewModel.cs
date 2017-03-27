@@ -22,7 +22,7 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Вью модель для твитов.
         /// </summary>
-        private TweetsViewModel _tweetsViewModel;
+        private CommentsViewModel _commentsViewModel;
 
         /// <summary>
         /// Текущий пользователь.
@@ -38,7 +38,7 @@ namespace Itgm.ViewModels
         /// <param name="resolveView">Метод отрисовки нового представления.</param>
         public ContentViewModel(IService service, Action<ViewTypes> resolveView) : base(service, resolveView)
         {
-            _tweetsViewModel = new TweetsViewModel(service);
+            _commentsViewModel = new CommentsViewModel(service);
 
             ReloginCommand = new ActionCommand(OnRelogin);
             SwitchContentCommand = new ActionCommand(OnSwitchContent);
@@ -125,9 +125,9 @@ namespace Itgm.ViewModels
         {
             User = _service.GetUserInfo();
 
-            _tweetsViewModel.InitializeViewModel();
+            _commentsViewModel.InitializeViewModel();
 
-            CurrentContent = _tweetsViewModel;
+            CurrentContent = _commentsViewModel;
         }
 
         /// <summary>

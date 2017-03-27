@@ -59,22 +59,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\MediaModel.cs" />
     <Compile Include="ViewModels\AuthenticationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ContentViewModel.cs" />
     <Compile Include="ViewModels\ResolvingViewModel.cs" />
-    <Compile Include="ViewModels\TweetsViewModel.cs" />
+    <Compile Include="ViewModels\CommentsViewModel.cs" />
     <Compile Include="Views\AutorizationPage.xaml.cs">
       <DependentUpon>AutorizationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CommentsView.xaml.cs">
+      <DependentUpon>CommentsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ContentPage.xaml.cs">
       <DependentUpon>ContentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LongProcessControl.xaml.cs">
       <DependentUpon>LongProcessControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\GeneralContentPage.xaml.cs">
-      <DependentUpon>GeneralContentPage.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -116,7 +117,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\GeneralContentPage.xaml">
+    <Page Include="Views\CommentsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -170,6 +171,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\background1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\comment.png" />
+    <Resource Include="Images\like.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

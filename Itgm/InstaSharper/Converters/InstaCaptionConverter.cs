@@ -10,6 +10,11 @@ namespace InstaSharper.Converters
 
         public InstaCaption Convert()
         {
+            if (SourceObject == null)
+            {
+                return null;
+            }
+
             var caption = new InstaCaption
             {
                 Pk = SourceObject.Pk,

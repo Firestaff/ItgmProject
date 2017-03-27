@@ -60,6 +60,6 @@
 
         </WrapPanel>
 
-        <v:LongProcessControl Visibility="Visible"/>
+        <v:LongProcessControl Visibility="{Binding IsLongProcessStarted, Converter={StaticResource BoolToVisibilityConverter}}"/>
     </Grid>
 </UserControl>

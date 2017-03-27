@@ -10,13 +10,13 @@ using System.Windows.Media;
 namespace Itgm.Views
 {
     /// <summary>
-    /// Interaction logic for TweetsPage.xaml
+    /// Interaction logic for MediasPage.xaml
     /// </summary>
-    public partial class GeneralContentPage : UserControl
+    public partial class CommentsView : UserControl
     {
         private ScrollViewer _scrollViewer;
 
-        public GeneralContentPage()
+        public CommentsView()
         {
             InitializeComponent();
         }
@@ -30,20 +30,11 @@ namespace Itgm.Views
             e.Handled = true;
         }
 
-        private void ContentImage_Click(object sender, RoutedEventArgs e)
-        {
-            // открываем твит в твиттере
-            var button = (Button)sender;
-            Uri link = new Uri(button.Tag.ToString());
-            Process.Start(new ProcessStartInfo(link.AbsoluteUri));
-            e.Handled = true;
-        }
-
         private void ScrollToTop_Click(object sender, RoutedEventArgs e)
         {
-            if (Tweets.Items.Count != 0)
+            if (Medias.Items.Count != 0)
             {
-                Tweets.ScrollIntoView(Tweets.Items[0]);
+                Medias.ScrollIntoView(Medias.Items[0]);
             }
         }
 
@@ -51,21 +42,21 @@ namespace Itgm.Views
         #region ScrollViewer
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            var count = Tweets.Items.Count;
+            var count = Medias.Items.Count;
             var offset = (int)e.VerticalOffset;
             var maxOffset = (int)_scrollViewer.ScrollableHeight;
             if (offset == maxOffset
                 && count != 0)
             {
-                AddTweetsButton.Command.Execute(Tweets.Items[count - 1]);
+                //AddMediasButton.Command.Execute(Medias.Items[count - 1]);
             }
         }
 
-        private void Tweets_Loaded(object sender, RoutedEventArgs e)
+        private void Medias_Loaded(object sender, RoutedEventArgs e)
         {
             if (_scrollViewer == null)
             {
-                var border = VisualTreeHelper.GetChild(Tweets, 0);
+                var border = VisualTreeHelper.GetChild(Medias, 0);
                 _scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
             }
 
@@ -75,7 +66,7 @@ namespace Itgm.Views
             }
         }
 
-        private void Tweets_Unloaded(object sender, RoutedEventArgs e)
+        private void Medias_Unloaded(object sender, RoutedEventArgs e)
         {
             if (_scrollViewer != null)
             {

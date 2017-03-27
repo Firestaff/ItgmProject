@@ -61,7 +61,7 @@ namespace Itgm.Classes
             //var z = Task.Run(async ()=> await _instaApi.GetMediaByCode("48B3kA2skbFbEbtKS/NLDq4HAUk=")).Result;
 
 
-            var mails = _app.GetDirectInbox();
+            //var mails = _app.GetDirectInbox();
             //var a = _instaApi.GetDirectInboxThread("340282366841710300949128133717524366136");
             //var e = _instaApi.GetUserRequestersAsync();
 
@@ -91,8 +91,6 @@ namespace Itgm.Classes
             //    Console.WriteLine($"Tag feed items (in {tagFeed.Value.Pages} pages) [{currentUser.UserName}]: {tagFeed.Value.MediaItemsCount}");
             //    foreach (var media in tagFeed.Value.Medias) Console.WriteLine($"Tag feed item - code: {media.Code}, likes: {media.LikesCount}");
             //}
-            var logoutResult = _app.Logout();
-            if (logoutResult.Value) Console.WriteLine("Logout succeed");
         }
 
         /// <summary>
@@ -122,19 +120,24 @@ namespace Itgm.Classes
             };
 
             // create new InstaApi instance using Builder
-            var _app = new InstaApiBuilder()
-                .SetUser(userSession)
-                .Build();
+            _app = new InstaApiBuilder()
+                   .SetUser(userSession)
+                   .Build();
 
             // login
             var logInResult = await _app.LoginAsync();
 
             SetState(logInResult.Info);
+
+            if (AuthenticationState == WebExceptionStatus.Success)
+            {
+                _loggedUser = userSession.LoggedInUser;
+            }
         }
 
-        public async Task LogoutAsync()
+        public async Task  LogoutAsync()
         {
-            _app.LogoutAsync();
+            await _app.LogoutAsync();
         }
 
         /// <summary>
@@ -165,21 +168,10 @@ namespace Itgm.Classes
             return null;
         }
 
-        /// <summary>
-        /// Попытка получить пин-код от твиттера.
-        /// </summary>
-        public async Task GetPincodeAsync()
+        public async Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId)
         {
-            //RateLimit.RateLimitTrackerOption = RateLimitTrackerOptions.None;
-
-            //Запрос к серверу для авторизации приложения
-            if (!await Task.Run(() => InitializeCredentials()))
-            {
-                return;
-            }
-
-            // Открываем страничку в браузере
-            RequestBrowser();
+            var result = await _app.GetMediaCommentsAsync(mediaId);
+            return result.Value.Comments;
         }
 
         /// <summary>
@@ -188,29 +180,9 @@ namespace Itgm.Classes
         /// <param name="maxId">Максимальный идентификатор твита, с которого необходимо провести запрос.</param>
         /// <param name="count">Количество запрашиваемых твитов.</param>
         /// <returns>Коллекция твитов.</returns>
-        public async Task<IEnumerable<InstaComment>> GetTweetsAsync()
+        public async Task<IEnumerable<InstaMedia>> GetMediasAsync()
         {
-            //var rateLimits = RateLimit.GetCredentialsRateLimits(Auth.Credentials, useRateLimitCache: true);
-            //if (rateLimits.StatusesHomeTimelineLimit.Remaining == 0)
-            //{
-            //    OnRateLimitOver(
-            //        new RateLimitEventArgs(
-            //            RateLimitType.TweetsRateLimit, 
-            //            rateLimits.StatusesHomeTimelineLimit.ResetDateTime.Minute));
-
-            //    return null;
-            //}
-
-            //IHomeTimelineParameters parameters = new HomeTimelineParameters()
-            //{
-            //    MaxId = maxId - 1,
-            //    MaximumNumberOfTweetsToRetrieve = count
-            //};
-
-            //var tweets = await Task.Run(() => GetTweets(parameters));
-            //return tweets;
-
-            return null;
+            return (await _app.GetUserMediaAsync(_loggedUser.UserName)).Value;
         }
 
         /// <summary>

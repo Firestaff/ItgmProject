@@ -7,6 +7,7 @@
     <Color x:Key="TwitterLightGrayColor">#e1e8ed</Color>
     <Color x:Key="TwitterIconColor">#BDC6CC</Color>
     <Color x:Key="TwitterTweetBackgroundColor">#ffffff</Color>
+    <Color x:Key="OpaqueGrayColor">#AA3F3F3F</Color>
     
 
     <SolidColorBrush x:Key="TwitterMainThemeBrush" Color="{StaticResource TwitterMainThemeColor}"/>
@@ -15,6 +16,7 @@
     <SolidColorBrush x:Key="TwitterLightGrayBrush" Color="{StaticResource TwitterLightGrayColor}"/>
     <SolidColorBrush x:Key="TwitterIconBrush" Color="{StaticResource TwitterIconColor}"/>
     <SolidColorBrush x:Key="TwitterTweetBackgroundBrush" Color="{StaticResource TwitterTweetBackgroundColor}"/>
+    <SolidColorBrush x:Key="OpaqueGrayBrush" Color="{StaticResource OpaqueGrayColor}"/>
 
     <LinearGradientBrush x:Key="CuttedWhiteFillBrush" StartPoint="0,1" EndPoint="0,0">
         <GradientStop Color="#FFFFFFFF" Offset="0.2"/>

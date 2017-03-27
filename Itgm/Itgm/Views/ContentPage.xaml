@@ -10,10 +10,13 @@
              xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
              
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance vm:ContentViewModel}">
+             d:DataContext="{d:DesignInstance vm:ContentViewModel}"
+             
+             MinHeight="600"
+             MinWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="26"/>
+            <RowDefinition Height="29"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="Transparent">
@@ -24,11 +27,11 @@
             <Grid VerticalAlignment="Stretch"
                   HorizontalAlignment="Left" 
                   Margin="5,2,0,2"
-                  Width="22">
+                  Width="25">
                 <Border Name="AvatarImageMask" 
                         CornerRadius="4" 
-                        Background="Transparent"/>
-                <Image Source="{Binding User.ProfileImageUrl, Mode=OneWay, IsAsync=True}" 
+                        Background="{StaticResource TwitterTweetBackgroundBrush}"/>
+                <Image Source="{Binding User.ProfilePicture, Mode=OneWay, IsAsync=True}" 
                        Name="ContentImage">
                     <Image.OpacityMask>
                         <VisualBrush Visual="{Binding ElementName=AvatarImageMask}" />
@@ -36,35 +39,35 @@
                 </Image>
             </Grid>
 
-            <TextBlock Text="{Binding User.ScreenName, Mode=OneWay, StringFormat=@{0}}"
+            <TextBlock Text="{Binding User.UserName, Mode=OneWay, StringFormat=@{0}}"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
-                       Margin="30,0,0,0"
+                       Margin="33,0,0,0"
                        FontWeight="Normal"
-                       FontSize="12"
-                       Foreground="{StaticResource TwitterAdditionalTextBrush}"
+                       FontSize="13"
+                       Foreground="{StaticResource TwitterTweetBackgroundBrush}"
                        TextTrimming="CharacterEllipsis"/>
 
-            <Button Command="{Binding UpdateCommand}"
+            <!--<Button Command="{Binding UpdateCommand}"
                     HorizontalAlignment="Center" 
                     FontSize="14"
                     Background="Transparent"
                     Foreground="White"
-                    Content="Обновить"/>
+                    Content="Обновить"/>-->
 
             <CheckBox Style="{StaticResource AnimatedSwitch}" 
                       Width="40"
                       Command="{Binding SwitchContentCommand}"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Right" 
-                      Margin="0,0,55,0"/>
+                      Margin="0,0,0,0"/>
 
-            <Button Command="{Binding ReloginCommand}"
+            <!--<Button Command="{Binding ReloginCommand}"
                     HorizontalAlignment="Right" 
                     Background="Transparent"
                     Foreground="White"
                     Margin="0,0,5,0"
-                    Content="Выйти"/>
+                    Content="Выйти"/>-->
         </Grid>
         <ContentControl Grid.Row="1" Content="{Binding CurrentContent, Mode=OneWay}"/>
     </Grid>

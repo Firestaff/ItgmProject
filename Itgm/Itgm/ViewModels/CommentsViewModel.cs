@@ -1,21 +1,24 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 using System.Windows.Input;
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
-using Itgm.Classes;
 using System.Threading.Tasks;
-using InstaSharper.Classes.Models;
+using Itgm.Models;
 
 namespace Itgm.ViewModels
 {
     /// <summary>
     /// Вью модель для отображения твитов.
     /// </summary>
-    public class TweetsViewModel : ResolvingViewModel
+    public class CommentsViewModel : ResolvingViewModel
     {
+        /// <summary>
+        /// Показывает запущена ли длительная операция.
+        /// </summary>
+        private MediaViewModel _currentMedia;
+
         /// <summary>
         /// Показывает запущена ли длительная операция.
         /// </summary>
@@ -30,13 +33,34 @@ namespace Itgm.ViewModels
         /// Создание вью модели.
         /// </summary>
         /// <param name="service">Сервис.</param>
-        public TweetsViewModel(IService service) : base(service, null)
+        public CommentsViewModel(IService service) : base(service, null)
         {
-            AddOldTweetsCommand = new ActionCommand((t => AddOldTweets(t)));
+            //SetCurrentMediaCommand = new ActionCommand((m => SetCurrentMedia(m)));
             //_service.RateLimitOver += CheckRateLimitIsOver;
         }
 
         #region Properties
+        /// <summary>
+        /// Устанавливает текущий пост.
+        /// </summary>
+        public MediaViewModel CurrentMedia
+        {
+            get
+            {
+                return _currentMedia;
+            }
+            set
+            {
+                if (_currentMedia == value)
+                {
+                    return;
+                }
+
+                _currentMedia = value;
+                UpdateMediaCommentsAsync(_currentMedia);
+                OnPropertyChanged("CurrentMedia");
+            }
+        }
 
         /// <summary>
         /// Показывает запущена ли длительная операция.
@@ -62,8 +86,8 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Коллекция твитов.
         /// </summary>
-        public ObservableCollection<InstaComment> Tweets { get; private set; } 
-            = new ObservableCollection<InstaComment>();
+        public ObservableCollection<MediaViewModel> Medias { get; private set; } 
+            = new ObservableCollection<MediaViewModel>();
 
         #endregion
 
@@ -72,7 +96,7 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Команда подгрузки твитов.
         /// </summary>
-        public ICommand AddOldTweetsCommand { get; private set; }
+        public ICommand SetCurrentMediaCommand { get; private set; }
 
         #endregion
 
@@ -92,7 +116,7 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void ClearViewModel()
         {
-            Tweets.Clear();
+            Medias.Clear();
         }
 
         /// <summary>
@@ -106,16 +130,11 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Реагирует на команду запроса твитов.
         /// </summary>
-        /// <param name="t">Последний загруженный твит.</param>
-        private void AddOldTweets(object t)
+        private async void UpdateMediaCommentsAsync(MediaViewModel m)
         {
-            string tweet = (string)t;
-            if (tweet == null)
-            {
-                return;
-            }
-
-            LoadTweetsAsync(0);
+            m.Comments.Clear();
+            var comments = (await _service.GetMediaCommentsAsync(m.Pk)).ToList();
+            comments.ForEach(c => m.Comments.Add(c));
         }
 
         /// <summary>
@@ -134,11 +153,11 @@ namespace Itgm.ViewModels
 
             _cts = new CancellationTokenSource();
 
-            var result = await Task.Run(() => _service.GetTweetsAsync(), _cts.Token);
+            var result = await Task.Run(() => _service.GetMediasAsync(), _cts.Token);
             if (result != null && IsLongProcessStarted)
             {
-                var tweets = result.ToList();
-                tweets.ForEach(t => Tweets.Add(t));
+                var medias = result.ToList();
+                medias.ForEach(m => Medias.Add(new MediaViewModel(m)));
             }
 
             IsLongProcessStarted = false;

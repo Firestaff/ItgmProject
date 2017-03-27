@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="Itgm.Views.CommentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:local="clr-namespace:Itgm"
+             xmlns:v="clr-namespace:Itgm.Views"
+             xmlns:vm="clr-namespace:Itgm.ViewModels"
+             
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:CommentsViewModel}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.3*"/>
+        </Grid.ColumnDefinitions>
+
+        <ListView ItemsSource="{Binding Medias, Mode=OneTime}" Name="Medias"
+                  SelectedItem="{Binding CurrentMedia}"
+                  DisplayMemberPath="{Binding Pk}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  BorderThickness="0"
+                  Background="{StaticResource OpaqueGrayBrush}"
+                  Loaded="Medias_Loaded"
+                  Unloaded="Medias_Unloaded">
+            <ListView.Resources>
+                <Style TargetType="{x:Type ScrollBar}">
+                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}"/>
+                </Style>
+            </ListView.Resources>
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="1" BorderBrush="{StaticResource TwitterMainThemeBrush}" Margin="2">
+                        <Grid Name="MainItemGrid" 
+                                    Background="{StaticResource TwitterTweetBackgroundBrush}" 
+                                    HorizontalAlignment="Stretch">
+
+                            <Grid Name="MainContentImageGrid" 
+                                        HorizontalAlignment="Left"
+                                        Margin="0,0,0,0"
+                                        DataContext="{Binding Image, Mode=OneTime}"
+                                        Tag="{Binding ExpandedURL, Mode=OneTime}">
+                                    <Grid>
+                                        <Image Source="{Binding Url, IsAsync=True}" 
+                                               Name="ContentImage">
+                                        </Image>
+                                    </Grid>
+                                </Grid>
+
+                            <Grid Name="LikesGrid" 
+                                  Height="20"
+                                  VerticalAlignment="Bottom"
+                                  Background="{StaticResource TwitterTweetBackgroundBrush}">
+                                
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="15"/>
+                                    <ColumnDefinition Width="0.5*"/>
+                                    <ColumnDefinition Width="15"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Comments" 
+                                           Grid.Row="0" Grid.Column="0" 
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource TwitterAdditionalTextBrush}" 
+                                           FontSize="10"
+                                           FontFamily="Arial"
+                                           FontWeight="Normal"/>
+                            
+                                <TextBlock Text="Likes" 
+                                           Grid.Row="1" Grid.Column="2" 
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource TwitterAdditionalTextBrush}" 
+                                           FontSize="10"
+                                           FontFamily="Arial"
+                                           FontWeight="Light"/>
+
+                                <TextBlock Text="{Binding CommentsCount, Mode=OneTime}" 
+                                           Grid.Row="0" Grid.Column="1" Margin="2,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10"
+                                           FontFamily="Arial"
+                                           Foreground="{StaticResource TwitterAdditionalTextBrush}" 
+                                           FontWeight="Medium"/>
+
+                                <TextBlock Text="{Binding LikesCount, Mode=OneTime}"
+                                           Grid.Row="1" Grid.Column="3" Margin="2,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10"
+                                           FontFamily="Arial"
+                                           Foreground="{StaticResource TwitterAdditionalTextBrush}" 
+                                           FontWeight="Medium"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Width" Value="120"/>
+                    <Setter Property="Padding" Value="0,1,0,1"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        
+        <ListView ItemsSource="{Binding CurrentMedia.Comments}"
+                  DisplayMemberPath="Text"
+                  Foreground="White"
+                  Grid.Column="1" 
+                  Background="{StaticResource OpaqueGrayBrush}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  BorderThickness="0">
+            <ListView.Resources>
+                <Style TargetType="{x:Type ScrollBar}">
+                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
+                </Style>
+            </ListView.Resources>
+        </ListView>
+
+        <v:LongProcessControl Grid.ColumnSpan="3" Grid.RowSpan="2"
+                              Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" 
+                              Opacity="0.3"/>
+    </Grid>
+</UserControl>
