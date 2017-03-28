@@ -67,18 +67,8 @@
 
     <!--Defined styles-->
     <Style x:Key="DefaultWindowStyle" TargetType="{x:Type Window}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <ImageBrush ImageSource="..\\Images/background.jpg" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Background" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
-        <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="BorderBrush">
-            <Setter.Value>
-                <ImageBrush ImageSource="..\\Images/background1.jpg"/>
-            </Setter.Value>
-        </Setter>
 
         <Setter Property="Left" Value="0"/>
         <Setter Property="Top" Value="0"/>
@@ -91,8 +81,8 @@
         <Setter Property="MinWidth" Value="405"/>
 
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="AllowsTransparency" Value="True" />
-        <Setter Property="WindowStyle" Value="None"/>
+        <!--<Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="WindowStyle" Value="None"/>-->
         <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
     </Style>
 
@@ -155,8 +145,8 @@
         <Setter Property="FontFamily" Value="Gotham Narrow"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="TextOptions.TextHintingMode" Value="Animated"/>
-        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
-        <Setter Property="TextOptions.TextRenderingMode" Value="Auto"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
