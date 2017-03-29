@@ -12,6 +12,7 @@
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <converters:HtmlToTextConverter x:Key="HtmlToTextConverter" />
     <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    <converters:ImageAsyncConverter x:Key="ImageAsyncConverter" />
   
 
     <!--Data templates-->

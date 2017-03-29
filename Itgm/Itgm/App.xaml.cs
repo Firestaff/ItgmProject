@@ -29,9 +29,6 @@ namespace Itgm
         private Dictionary<ViewTypes, ResolvingViewModel> ViewModels =
             new Dictionary<ViewTypes, ResolvingViewModel>();
 
-        /// <summary>
-        /// Сервис для твиттера.
-        /// </summary>
         private IService _service;
 
         /// <summary>

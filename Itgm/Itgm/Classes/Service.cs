@@ -170,7 +170,7 @@ namespace Itgm.Classes
 
         public async Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId)
         {
-            var result = await _app.GetMediaCommentsAsync(mediaId);
+            var result = await _app.GetMediaCommentsAsync(mediaId, 1);
             return result.Value.Comments;
         }
 
@@ -182,7 +182,7 @@ namespace Itgm.Classes
         /// <returns>Коллекция твитов.</returns>
         public async Task<IEnumerable<InstaMedia>> GetMediasAsync()
         {
-            return (await _app.GetUserMediaAsync(_loggedUser.UserName)).Value;
+            return (await _app.GetUserMediaAsync(_loggedUser.UserName, 1)).Value;
         }
 
         /// <summary>

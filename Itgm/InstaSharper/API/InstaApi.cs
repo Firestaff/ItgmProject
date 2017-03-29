@@ -290,7 +290,7 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
+        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages)
         {
             ValidateUser();
             if (maxPages == 0) maxPages = int.MaxValue;
@@ -616,7 +616,6 @@ namespace InstaSharper.API
             }
         }
 
-
         public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
         {
             ValidateUser();
@@ -666,7 +665,6 @@ namespace InstaSharper.API
             return await GetRecentActivityInternalAsync(uri, maxPages);
         }
 
-
         public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
         {
             if (string.IsNullOrEmpty(checkPointUrl)) return Result.Fail("Empty checkpoint URL", false);
@@ -676,6 +674,82 @@ namespace InstaSharper.API
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK) return Result.Success(true);
             return Result.Fail(GetBadStatusFromJsonString(json).Message, false);
+        }
+
+        public async Task<IResult<bool>> LikeMediaAsync(string mediaId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
+            }
+        }
+
+        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                if (maxPages == 0) maxPages = int.MaxValue;
+                var commentsUri = UriCreator.GetMediaCommentsUri(mediaId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.Fail($"Unexpected response status: {response.StatusCode}", (InstaCommentList)null);
+                var commentListResponse = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
+                var converter = ConvertersFabric.GetCommentListConverter(commentListResponse);
+                var instaComments = converter.Convert();
+                instaComments.Pages++;
+                var nextId = commentListResponse.NextMaxId;
+                while (commentListResponse.MoreComentsAvailable && instaComments.Pages < maxPages)
+                {
+                    if (string.IsNullOrEmpty(nextId)) break;
+                    var nextComments = await GetCommentListWithMaxIdAsync(mediaId, nextId);
+                    if (!nextComments.Succeeded)
+                        Result.Success($"Not all pages was downloaded: {nextComments.Info.Message}", instaComments);
+                    nextId = nextComments.Value.NextMaxId;
+                    converter = ConvertersFabric.GetCommentListConverter(nextComments.Value);
+                    instaComments.Comments.AddRange(converter.Convert().Comments);
+                    instaComments.Pages++;
+                }
+                return Result.Success(instaComments);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaCommentList>(exception);
+            }
+        }
+
+        public async Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var likersUri = UriCreator.GetMediaLikersUri(mediaId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, likersUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaUserList)null);
+                var instaUsers = new InstaUserList();
+                var mediaLikersResponse = JsonConvert.DeserializeObject<InstaMediaLikersResponse>(json);
+                if (mediaLikersResponse.UsersCount < 1) return Result.Success(instaUsers);
+                instaUsers.AddRange(
+                    mediaLikersResponse.Users.Select(ConvertersFabric.GetUserConverter)
+                        .Select(converter => converter.Convert()));
+                return Result.Success(instaUsers);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaUserList>(exception);
+            }
         }
 
         #endregion
@@ -862,83 +936,6 @@ namespace InstaSharper.API
             }
             return Result.Fail("", (InstaCommentListResponse) null);
         }
-
-        public async Task<IResult<bool>> LikeMediaAsync(string mediaId)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            try
-            {
-                throw new NotImplementedException();
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail(exception.Message, false);
-            }
-        }
-
-        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            try
-            {
-                if (maxPages == 0) maxPages = int.MaxValue;
-                var commentsUri = UriCreator.GetMediaCommentsUri(mediaId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUri, _deviceInfo);
-                var response = await _httpClient.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.Fail($"Unexpected response status: {response.StatusCode}", (InstaCommentList) null);
-                var commentListResponse = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
-                var converter = ConvertersFabric.GetCommentListConverter(commentListResponse);
-                var instaComments = converter.Convert();
-                instaComments.Pages++;
-                var nextId = commentListResponse.NextMaxId;
-                while (commentListResponse.MoreComentsAvailable && instaComments.Pages < maxPages)
-                {
-                    if (string.IsNullOrEmpty(nextId)) break;
-                    var nextComments = await GetCommentListWithMaxIdAsync(mediaId, nextId);
-                    if (!nextComments.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextComments.Info.Message}", instaComments);
-                    nextId = nextComments.Value.NextMaxId;
-                    converter = ConvertersFabric.GetCommentListConverter(nextComments.Value);
-                    instaComments.Comments.AddRange(converter.Convert().Comments);
-                    instaComments.Pages++;
-                }
-                return Result.Success(instaComments);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaCommentList>(exception);
-            }
-        }
-
-        public async Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            try
-            {
-                var likersUri = UriCreator.GetMediaLikersUri(mediaId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, likersUri, _deviceInfo);
-                var response = await _httpClient.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaUserList) null);
-                var instaUsers = new InstaUserList();
-                var mediaLikersResponse = JsonConvert.DeserializeObject<InstaMediaLikersResponse>(json);
-                if (mediaLikersResponse.UsersCount < 1) return Result.Success(instaUsers);
-                instaUsers.AddRange(
-                    mediaLikersResponse.Users.Select(ConvertersFabric.GetUserConverter)
-                        .Select(converter => converter.Convert()));
-                return Result.Success(instaUsers);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaUserList>(exception);
-            }
-        }
-
         #endregion
     }
 }
