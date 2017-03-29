@@ -64,6 +64,6 @@
         public const string HEADER_TIMEZONE = "timezone_offset";
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
 
-        public const int TIMEZONE_OFFSET = 43200;
+        public const int TIMEZONE_OFFSET = 10800;
     }
 }

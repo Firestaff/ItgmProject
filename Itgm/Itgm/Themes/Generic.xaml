@@ -77,8 +77,8 @@
         <Setter Property="FontWeight" Value="UltraLight"/>
         <Setter Property="FontFamily" Value="DejaVu Sans Mono"/>
 
-        <Setter Property="MinHeight" Value="600"/>
-        <Setter Property="MinWidth" Value="405"/>
+        <Setter Property="MinHeight" Value="650"/>
+        <Setter Property="MinWidth" Value="1050"/>
 
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <!--<Setter Property="AllowsTransparency" Value="True" />
@@ -158,6 +158,24 @@
                 <Setter Property="Visibility" Value="Collapsed"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="SelectableTextBlockStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontFamily" Value="Gotham Narrow"/>
+        <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+        <Setter Property="Padding" Value="2,0,2,0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="TextOptions.TextHintingMode" Value="Animated"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="IsReadOnly" Value="True"/>
     </Style>
 
     <Style x:Key="PincodeTextBoxStyle" TargetType="{x:Type TextBox}">
@@ -376,6 +394,7 @@
     <Style TargetType="{x:Type v:LongProcessControl}" BasedOn="{StaticResource DefaultLongProcessControlStyle}" />
     <Style TargetType="{x:Type Window}" BasedOn="{StaticResource DefaultWindowStyle}" />
     <Style TargetType="{x:Type Image}" BasedOn="{StaticResource HighQualityImageStyle}" />
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource SelectableTextBlockStyle}" />
     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TwitterTextBlockStyle}" />
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource LightButtonStyle}" />
 </ResourceDictionary>

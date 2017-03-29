@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using InstaSharper.Classes.Models;
+using Itgm.Interfaces;
 using Itgm.ViewModels;
 
 namespace Itgm.Models
@@ -12,14 +13,15 @@ namespace Itgm.Models
     public class MediaViewModel : BaseViewModel
     {
         private InstaMedia _model;
+        private IService _service;
 
-        public MediaViewModel(InstaMedia media)
+        public MediaViewModel(InstaMedia media, IService service)
         {
             _model = media;
+            _service = service;
 
             InitializeViewModel();
         }
-
 
         public DateTime TakenAt { get; set; }
         public string Pk { get; set; }
@@ -56,12 +58,22 @@ namespace Itgm.Models
 
         public override void ClearViewModel()
         {
-            
+            Comments.Clear();
         }
 
-        public override void UpdateViewModel()
+        public override async void UpdateViewModel()
         {
-            
+            Comments.Clear();
+            var comments = (await _service.GetMediaCommentsAsync(Pk))
+                            .Where(c => c.User.Pk != _service.GetUserInfo().Pk)
+                            .ToList(); ;
+            comments.Reverse();
+
+            for (int i = 0; i < 20; i++)
+            {
+
+                comments.ForEach(c => Comments.Add(c));
+            }
         }
     }
 }

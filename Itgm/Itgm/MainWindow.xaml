@@ -11,7 +11,6 @@
         BorderThickness="1,0,1,1"
         BorderBrush="#68768A"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight"
         Style="{StaticResource DefaultWindowStyle}"
         MouseDown="Window_MouseDown">
     

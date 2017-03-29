@@ -57,7 +57,7 @@ namespace Itgm.ViewModels
                 }
 
                 _currentMedia = value;
-                UpdateMediaCommentsAsync(_currentMedia);
+                _currentMedia.UpdateViewModel();
                 OnPropertyChanged("CurrentMedia");
             }
         }
@@ -108,7 +108,7 @@ namespace Itgm.ViewModels
         public override void InitializeViewModel()
         {
             ClearViewModel();
-            LoadTweetsAsync();
+            LoadMediasAsync();
         }
 
         /// <summary>
@@ -128,20 +128,10 @@ namespace Itgm.ViewModels
         }
 
         /// <summary>
-        /// Реагирует на команду запроса твитов.
-        /// </summary>
-        private async void UpdateMediaCommentsAsync(MediaViewModel m)
-        {
-            m.Comments.Clear();
-            var comments = (await _service.GetMediaCommentsAsync(m.Pk)).ToList();
-            comments.ForEach(c => m.Comments.Add(c));
-        }
-
-        /// <summary>
         /// Запрашивает более старые твиты из сервиса.
         /// </summary>
         /// <param name="maxId">Идентификатор последнего загруженного твита.</param>
-        private async void LoadTweetsAsync(long maxId = 0)
+        private async void LoadMediasAsync(long maxId = 0)
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
             if (_isLongProcessStarted)
@@ -157,7 +147,11 @@ namespace Itgm.ViewModels
             if (result != null && IsLongProcessStarted)
             {
                 var medias = result.ToList();
-                medias.ForEach(m => Medias.Add(new MediaViewModel(m)));
+                for (int i = 0; i < 29; i++)
+                {
+                    medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));
+                }
+                CurrentMedia = Medias.FirstOrDefault();
             }
 
             IsLongProcessStarted = false;
