@@ -68,7 +68,7 @@ namespace InstaSharper.API
             return GetUserTimelineFeedAsync(maxPages).Result;
         }
 
-        public IResult<InstaMediaList> GetUserMedia(string username, int maxPages = 0)
+        public IResult<InstaMediaList> GetUserMedia(string username, int maxPages)
         {
             return GetUserMediaAsync(username, maxPages).Result;
         }
@@ -144,7 +144,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<bool>> LoginAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateRequestMessage();
             try
             {
@@ -168,6 +168,7 @@ namespace InstaSharper.API
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
+
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var loginInfo =
@@ -176,6 +177,12 @@ namespace InstaSharper.API
                     var converter = ConvertersFabric.GetUserConverter(loginInfo.User);
                     _user.LoggedInUser = converter.Convert();
                     _user.RankToken = $"{_user.LoggedInUser.Pk}_{_requestMessage.phone_id}";
+
+                    instaUri = UriCreator.GetUserInfo(_user.LoggedInUser.Pk);
+                    request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+                    response = await _httpClient.SendAsync(request);
+                    json = await response.Content.ReadAsStringAsync();
+
                     return Result.Success(true);
                 }
                 else
@@ -201,7 +208,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<bool>> LogoutAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -229,7 +236,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             var userFeedUri = UriCreator.GetUserFeedUri();
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
@@ -259,7 +266,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -292,13 +299,17 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages)
         {
-            ValidateUser();
-            if (maxPages == 0) maxPages = int.MaxValue;
+            if (maxPages == 0)
+            {
+                maxPages = int.MaxValue;
+            }
+
             var user = GetUser(username).Value;
             var instaUri = UriCreator.GetUserMediaListUri(user.Pk);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
+
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
@@ -310,12 +321,13 @@ namespace InstaSharper.API
                 while (mediaResponse.MoreAvailable && mediaList.Pages < maxPages)
                 {
                     instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Pk, nextId);
-                    var nextMedia = await GetUserMediaListWithMaxIdAsync(instaUri);
+                    var result = await GetUserMediaListWithMaxIdAsync(instaUri);
+                    mediaResponse = result.Value;
                     mediaList.Pages++;
-                    if (!nextMedia.Succeeded)
-                        Result.Success($"Not all pages were downloaded: {nextMedia.Info.Message}", mediaList);
-                    nextId = nextMedia.Value.NextMaxId;
-                    converter = ConvertersFabric.GetMediaListConverter(nextMedia.Value);
+                    if (!result.Succeeded)
+                        Result.Success($"Not all pages were downloaded: {result.Info.Message}", mediaList);
+                    nextId = mediaResponse.NextMaxId;
+                    converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
                     mediaList.AddRange(converter.Convert());
                 }
                 return Result.Success(mediaList);
@@ -325,7 +337,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaMedia>> GetMediaByIdAsync(string mediaId)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             var mediaUri = UriCreator.GetMediaUri(mediaId);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, mediaUri, _deviceInfo);
             var response = await _httpClient.SendAsync(request);
@@ -348,7 +360,12 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaUser>> GetUserAsync(string username)
         {
-            ValidateUser();
+            if (_user.UserName == username)
+            {
+                return Result.Success(_user.LoggedInUser);
+            }
+
+            ValidateCurrentUser();
             var userUri = UriCreator.GetUserUri(username);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE,
@@ -373,10 +390,9 @@ namespace InstaSharper.API
             return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser) null);
         }
 
-
         public async Task<IResult<InstaUser>> GetCurrentUserAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             var instaUri = UriCreator.GetCurrentUserUri();
             dynamic jsonObject = new JObject();
@@ -406,7 +422,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             if (maxPages == 0) maxPages = int.MaxValue;
             var userFeedUri = UriCreator.GetTagFeedUri(tag);
@@ -439,7 +455,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -481,7 +497,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaUserList>> GetUserRequestersAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -522,16 +538,15 @@ namespace InstaSharper.API
             }
         }
 
-
         public async Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             return await GetUserFollowersAsync(_user.UserName, maxPages);
         }
 
         public async Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -572,10 +587,9 @@ namespace InstaSharper.API
             }
         }
 
-
         public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -596,7 +610,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -618,7 +632,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             var userUri = UriCreator.GetRecentRecipientsUri();
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
@@ -637,7 +651,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaRecipients>> GetRankedRecipientsAsync()
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             var userUri = UriCreator.GetRankedRecipientsUri();
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
@@ -678,7 +692,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<bool>> LikeMediaAsync(string mediaId)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -692,7 +706,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -729,7 +743,7 @@ namespace InstaSharper.API
 
         public async Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {
@@ -755,8 +769,7 @@ namespace InstaSharper.API
         #endregion
 
         #region private part
-
-        private void ValidateUser()
+        private void ValidateCurrentUser()
         {
             if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
                 throw new ArgumentException("user name and password must be specified");
@@ -840,7 +853,7 @@ namespace InstaSharper.API
 
         private async Task<IResult<InstaFollowersResponse>> GetUserFollowersWithMaxIdAsync(string username, string maxId)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             try
             {
                 if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
@@ -899,7 +912,7 @@ namespace InstaSharper.API
 
         private async Task<IResult<InstaMediaListResponse>> GetTagFeedWithMaxIdAsync(string tag, string nextId)
         {
-            ValidateUser();
+            ValidateCurrentUser();
             ValidateLoggedIn();
             try
             {

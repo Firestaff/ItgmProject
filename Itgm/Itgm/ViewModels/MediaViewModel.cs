@@ -68,11 +68,11 @@ namespace Itgm.ViewModels
         {
             Comments.Clear();
             var comments = (await _service.GetMediaCommentsAsync(Pk))
-                            .Where(c => c.User.Pk != _service.GetUserInfo().Pk)
+                            .Where(c => c.User.Pk != _service.LoggedUser.Pk)
                             .ToList();
             comments.Reverse();
 
-            for (int i = 0; i < 20; i++)
+            //for (int i = 0; i < 20; i++)
             {
 
                 comments.ForEach(c => Comments.Add(c));

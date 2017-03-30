@@ -16,6 +16,9 @@
         public const string INSTAGRAM_URL = "https://i.instagram.com";
         public const string API_SUFFIX = "/api";
         public const string SEARCH_USERS = API_SUFFIX + "/v1/users/search";
+
+        public const string GET_USER_INFO = API_SUFFIX + "/v1/users/{0}/info/";
+
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/v1/accounts/login/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/v1/accounts/logout/";
         public const string EXPLORE = API_SUFFIX + "/v1/discover/explore/";

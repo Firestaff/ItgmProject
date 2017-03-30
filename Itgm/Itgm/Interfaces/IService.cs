@@ -20,10 +20,10 @@ namespace Itgm.Interfaces
         /// </summary>
         WebExceptionStatus AuthenticationState { get; }
 
-        ///// <summary>
-        ///// Событие оповещающее о том, что кончились запросы.
-        ///// </summary>
-        //event EventHandler<RateLimitEventArgs> RateLimitOver;
+        /// <summary>
+        /// Текущий пользователь.
+        /// </summary>
+        InstaUser LoggedUser { get; }
 
         /// <summary>
         /// Попытка авторизации пользователя.
@@ -37,13 +37,6 @@ namespace Itgm.Interfaces
         /// </summary>
         Task LogoutAsync();
 
-        /// <summary>
-        /// Получение подписчиков и подписок для пользователя с заданным идентификатором.
-        /// </summary>
-        /// <param name="userId">Идентификатор пользователя.</param>
-        /// <returns>Список подписчиков и подписок(не содержит дубликатов).</returns>
-        IEnumerable<long> GetFollowersAndSubsIds(long userId);
-
         Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId);
 
         /// <summary>
@@ -52,19 +45,6 @@ namespace Itgm.Interfaces
         /// <param name="maxId">Максимальный идентификатор твита с которого необходимо провести запрос.</param>
         /// <param name="count">Количество запрашиваемых твитов.</param>
         /// <returns>Коллекция твитов.</returns>
-        Task<IEnumerable<InstaMedia>> GetMediasAsync();
-
-        /// <summary>
-        /// Получение залогиненного пользователя.
-        /// </summary>
-        /// <returns>Текущий пользователь.</returns>
-        InstaUser GetUserInfo();
-
-        /// <summary>
-        /// Получение имени пользователя с указанным идентификатором.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>Имя пользователя.</returns>
-        string GetUserName(long userId);
+        Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(int pagesCount = 1);
     }
 }

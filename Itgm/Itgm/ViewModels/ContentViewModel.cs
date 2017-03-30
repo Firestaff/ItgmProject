@@ -123,7 +123,7 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            User = _service.GetUserInfo();
+            User = _service.LoggedUser;
 
             _commentsViewModel.InitializeViewModel();
 

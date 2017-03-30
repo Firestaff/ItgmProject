@@ -142,11 +142,11 @@ namespace Itgm.ViewModels
 
             _cts = new CancellationTokenSource();
 
-            var result = await Task.Run(() => _service.GetMediasAsync(), _cts.Token);
+            var result = await Task.Run(() => _service.GetCurrentUserMediasAsync(), _cts.Token);
             if (result != null && IsLongProcessStarted)
             {
                 var medias = result.ToList();
-                for (int i = 0; i < 29; i++)
+                //for (int i = 0; i < 29; i++)
                 {
                     medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));
                 }

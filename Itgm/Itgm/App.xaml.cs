@@ -38,7 +38,7 @@ namespace Itgm
         {
             _mainWindow = new MainWindow();
             _service = new Service();
-            await _service.LoginAsync("iesopoval", "1234567u");
+            await _service.LoginAsync("strawberry.fie1d", "1234567uu");
 
             // Отрисовываем страницу получения логина/пароля
             ResolveViewModel(ViewTypes.Content);
