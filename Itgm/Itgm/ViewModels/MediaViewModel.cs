@@ -8,12 +8,14 @@ using InstaSharper.Classes.Models;
 using Itgm.Interfaces;
 using Itgm.ViewModels;
 
-namespace Itgm.Models
+namespace Itgm.ViewModels
 {
     public class MediaViewModel : BaseViewModel
     {
         private InstaMedia _model;
         private IService _service;
+        private int _commentsCount;
+        private int _likesCount;
 
         public MediaViewModel(InstaMedia media, IService service)
         {
@@ -32,11 +34,11 @@ namespace Itgm.Models
 
         public InstaUser User { get; set; }
 
-        public int LikesCount { get; set; }
+        public string LikesCount => GetThousandCount(_likesCount);
+
+        public string CommentsCount => GetThousandCount(_commentsCount);
 
         public string NextMaxId { get; set; }
-
-        public string CommentsCount { get; set; }
 
         public InstaUserList Likers { get; set; } = new InstaUserList();
 
@@ -45,11 +47,12 @@ namespace Itgm.Models
 
         public override void InitializeViewModel()
         {
-            CommentsCount = _model.CommentsCount;
+            _commentsCount = _model.CommentsCount;
+            _likesCount = _model.LikesCount;
+
             Image = _model.Images[0];
             InstaIdentifier = _model.InstaIdentifier;
             Likers = _model.Likers;
-            LikesCount = _model.LikesCount;
             NextMaxId = _model.NextMaxId;
             Pk = _model.Pk;
             TakenAt = _model.TakenAt;
@@ -66,7 +69,7 @@ namespace Itgm.Models
             Comments.Clear();
             var comments = (await _service.GetMediaCommentsAsync(Pk))
                             .Where(c => c.User.Pk != _service.GetUserInfo().Pk)
-                            .ToList(); ;
+                            .ToList();
             comments.Reverse();
 
             for (int i = 0; i < 20; i++)
@@ -74,6 +77,17 @@ namespace Itgm.Models
 
                 comments.ForEach(c => Comments.Add(c));
             }
+        }
+
+        private string GetThousandCount(int value)
+        {
+            if (value < 1000)
+            {
+                return value.ToString();
+            }
+
+            string thousands = (value / 1000).ToString();
+            return $"{thousands}k";
         }
     }
 }

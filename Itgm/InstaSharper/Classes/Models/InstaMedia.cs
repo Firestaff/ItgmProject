@@ -41,7 +41,7 @@ namespace InstaSharper.Classes.Models
 
         public InstaCaption Caption { get; set; }
 
-        public string CommentsCount { get; set; }
+        public int CommentsCount { get; set; }
 
         public bool PhotoOfYou { get; set; }
 

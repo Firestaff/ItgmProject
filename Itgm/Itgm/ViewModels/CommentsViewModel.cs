@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
 using System.Threading.Tasks;
-using Itgm.Models;
 
 namespace Itgm.ViewModels
 {
