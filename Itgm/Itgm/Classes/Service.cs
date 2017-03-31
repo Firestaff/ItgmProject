@@ -31,7 +31,7 @@ namespace Itgm.Classes
         /// <summary>
         /// Текущий пользователь.
         /// </summary>
-        public InstaUser LoggedUser { get; private set; }
+        public UserInfo LoggedUser { get; private set; }
 
         #region Public methods
         #region Media

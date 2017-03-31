@@ -29,8 +29,6 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO, userPk), out instaUri))
                 throw new Exception("Cant create user info URI");
-            //var userUriBuilder = new UriBuilder(instaUri) { Query = $"q={userPk}" };
-            //return userUriBuilder.Uri;
             return instaUri;
         }
 

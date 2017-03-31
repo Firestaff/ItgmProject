@@ -90,10 +90,10 @@
     <Compile Include="Classes\Models\InstaRecentActivityFeed.cs" />
     <Compile Include="Classes\Models\InstaRecipients.cs" />
     <Compile Include="Classes\Models\InstaStory.cs" />
-    <Compile Include="Classes\Models\InstaUser.cs" />
     <Compile Include="Classes\Models\InstaUserList.cs" />
     <Compile Include="Classes\Models\InstaUserTag.cs" />
     <Compile Include="Classes\Models\Likes.cs" />
+    <Compile Include="Classes\Models\UserInfo.cs" />
     <Compile Include="Classes\Result.cs" />
     <Compile Include="Classes\UserSessionData.cs" />
     <Compile Include="Converters\ConvertersFabric.cs" />
@@ -167,5 +167,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

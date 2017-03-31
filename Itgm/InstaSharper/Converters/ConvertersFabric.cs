@@ -5,7 +5,7 @@ namespace InstaSharper.Converters
 {
     internal class ConvertersFabric
     {
-        internal static IObjectConverter<InstaUser, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
+        internal static IObjectConverter<UserInfo, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
         {
             return new InstaUsersConverter {SourceObject = instaresponse};
         }

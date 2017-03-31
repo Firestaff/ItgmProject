@@ -23,7 +23,7 @@ namespace Itgm.Interfaces
         /// <summary>
         /// Текущий пользователь.
         /// </summary>
-        InstaUser LoggedUser { get; }
+        UserInfo LoggedUser { get; }
 
         /// <summary>
         /// Попытка авторизации пользователя.

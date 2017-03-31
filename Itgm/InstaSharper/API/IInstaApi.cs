@@ -69,17 +69,17 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        IResult<InstaUser> GetUser(string username);
+        IResult<UserInfo> GetUser(string username);
 
         /// <summary>
         ///     Get currently logged in user info
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        IResult<InstaUser> GetCurrentUser();
+        IResult<UserInfo> GetCurrentUser();
 
         /// <summary>
         ///     Get tag feed by tag value
@@ -230,17 +230,17 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        Task<IResult<InstaUser>> GetUserAsync(string username);
+        Task<IResult<UserInfo>> GetUserAsync(string username);
 
         /// <summary>
         ///     Get currently logged in user info asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        Task<IResult<InstaUser>> GetCurrentUserAsync();
+        Task<IResult<UserInfo>> GetCurrentUserAsync();
 
         /// <summary>
         ///     Get tag feed by tag value asynchronously

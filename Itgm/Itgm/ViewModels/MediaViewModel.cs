@@ -32,7 +32,7 @@ namespace Itgm.ViewModels
 
         public Image Image { get; set; }
 
-        public InstaUser User { get; set; }
+        public UserInfo User { get; set; }
 
         public string LikesCount => GetThousandCount(_likesCount);
 
@@ -68,7 +68,7 @@ namespace Itgm.ViewModels
         {
             Comments.Clear();
             var comments = (await _service.GetMediaCommentsAsync(Pk))
-                            .Where(c => c.User.Pk != _service.LoggedUser.Pk)
+                            .Where(c => c.User.Id != _service.LoggedUser.Id)
                             .ToList();
             comments.Reverse();
 

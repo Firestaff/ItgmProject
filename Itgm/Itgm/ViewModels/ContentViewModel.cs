@@ -27,7 +27,7 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Текущий пользователь.
         /// </summary>
-        public InstaUser _user;
+        public UserInfo _user;
 
         #endregion
 
@@ -69,7 +69,7 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Текущий пользователь.
         /// </summary>
-        public InstaUser User
+        public UserInfo User
         {
             get
             {

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.Models
 {
-    public class InstaUserList : List<InstaUser>
+    public class InstaUserList : List<UserInfo>
     {
     }
 }

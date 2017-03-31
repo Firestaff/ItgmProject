@@ -4,6 +4,6 @@
     {
         public bool IsOutgoingRequest { get; set; }
         public bool IsFollowing { get; set; }
-        public InstaUser User { get; set; }
+        public UserInfo User { get; set; }
     }
 }
