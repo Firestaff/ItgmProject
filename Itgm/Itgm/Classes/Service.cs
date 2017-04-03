@@ -35,9 +35,9 @@ namespace Itgm.Classes
 
         #region Public methods
         #region Media
-        public async Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(int pagesCount = 1)
+        public async Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId = null)
         {
-            return (await _app.GetUserMediaAsync(LoggedUser.UserName, pagesCount)).Value;
+            return (await _app.GetUserMediaAsync(LoggedUser.UserName, fromId)).Value;
         }
 
         public async Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId)

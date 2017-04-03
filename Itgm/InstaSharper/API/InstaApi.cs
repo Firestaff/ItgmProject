@@ -68,9 +68,9 @@ namespace InstaSharper.API
             return GetUserTimelineFeedAsync(maxPages).Result;
         }
 
-        public IResult<InstaMediaList> GetUserMedia(string username, int maxPages)
+        public IResult<InstaMediaList> GetUserMedia(string username, string fromId)
         {
-            return GetUserMediaAsync(username, maxPages).Result;
+            return GetUserMediaAsync(username, fromId).Result;
         }
 
         public IResult<UserInfo> GetUser(string username)
@@ -301,42 +301,24 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages)
+        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, string fromId)
         {
-            if (maxPages == 0)
-            {
-                maxPages = int.MaxValue;
-            }
-
             var user = GetUser(username).Value;
-            var instaUri = UriCreator.GetUserMediaListUri(user.Id);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-            var response = await _httpClient.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            var mediaList = new InstaMediaList();
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            var instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Id, fromId);
+            var result = await GetUserMediaListWithMaxIdAsync(instaUri);
+            var mediaResponse = result.Value;
+
+            if (!result.Succeeded)
             {
-                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
-                    new InstaMediaListDataConverter());
-                var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
-                var mediaList = converter.Convert();
-                mediaList.Pages++;
-                var nextId = mediaResponse.NextMaxId;
-                while (mediaResponse.MoreAvailable && mediaList.Pages < maxPages)
-                {
-                    instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Id, nextId);
-                    var result = await GetUserMediaListWithMaxIdAsync(instaUri);
-                    mediaResponse = result.Value;
-                    mediaList.Pages++;
-                    if (!result.Succeeded)
-                        Result.Success($"Not all pages were downloaded: {result.Info.Message}", mediaList);
-                    nextId = mediaResponse.NextMaxId;
-                    converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
-                    mediaList.AddRange(converter.Convert());
-                }
-                return Result.Success(mediaList);
+                Result.Fail($"Not all pages were downloaded: {result.Info.Message}", mediaList);
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList) null);
+
+            var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
+            mediaList.AddRange(converter.Convert());
+
+            return Result.Success(mediaList);
         }
 
         public async Task<IResult<InstaMedia>> GetMediaByIdAsync(string mediaId)

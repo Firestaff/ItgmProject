@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
 using System.Threading.Tasks;
+using InstaSharper.Classes.Models;
 
 namespace Itgm.ViewModels
 {
@@ -28,12 +29,15 @@ namespace Itgm.ViewModels
         /// </summary>
         private CancellationTokenSource _cts;
 
+        private UserInfo _user; 
+
         /// <summary>
         /// Создание вью модели.
         /// </summary>
         /// <param name="service">Сервис.</param>
         public CommentsViewModel(IService service) : base(service, null)
         {
+            _user = service.LoggedUser;
             //SetCurrentMediaCommand = new ActionCommand((m => SetCurrentMedia(m)));
             //_service.RateLimitOver += CheckRateLimitIsOver;
         }
@@ -139,10 +143,11 @@ namespace Itgm.ViewModels
             }
 
             IsLongProcessStarted = true;
-
             _cts = new CancellationTokenSource();
 
-            var result = await Task.Run(() => _service.GetCurrentUserMediasAsync(), _cts.Token);
+            var nextId = Medias.LastOrDefault()?.Pk;
+
+            var result = await Task.Run(() => _service.GetCurrentUserMediasAsync(nextId), _cts.Token);
             if (result != null && IsLongProcessStarted)
             {
                 var medias = result.ToList();
@@ -152,6 +157,8 @@ namespace Itgm.ViewModels
                 }
                 CurrentMedia = Medias.FirstOrDefault();
             }
+
+
 
             IsLongProcessStarted = false;
         }

@@ -45,6 +45,6 @@ namespace Itgm.Interfaces
         /// <param name="maxId">Максимальный идентификатор твита с которого необходимо провести запрос.</param>
         /// <param name="count">Количество запрашиваемых твитов.</param>
         /// <returns>Коллекция твитов.</returns>
-        Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(int pagesCount = 1);
+        Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId);
     }
 }

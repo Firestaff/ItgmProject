@@ -20,13 +20,23 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.Resources>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DefaultButtonStyle}"/>
+                <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TwitterTextBlockStyle}">
+                    <Setter Property="Foreground" Value="{StaticResource TwitterAdditionalTextBrush}"/>
+                </Style>
             </Grid.Resources>
 
             <Grid VerticalAlignment="Center"
                   HorizontalAlignment="Left" 
                   Margin="5,2,0,2"
+                  Grid.Column="0"
                   Width="25" Height="25">
                 <Border Name="AvatarImageMask" 
                         CornerRadius="4" 
@@ -42,12 +52,57 @@
             <TextBlock Text="{Binding User.UserName, Mode=OneWay, StringFormat=@{0}}"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
-                       Margin="35,0,0,0"
+                       Grid.Column="0"
+                       Margin="37,0,10,0"
                        FontWeight="Normal"
                        FontSize="13"
                        Foreground="{StaticResource TwitterAdditionalTextBrush}"
                        TextTrimming="CharacterEllipsis"/>
-
+            
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" 
+                           VerticalAlignment="Bottom"
+                           TextAlignment="Center"
+                           Text="{Binding User.MediaCount}"/>
+                <TextBlock Grid.Row="1" 
+                           VerticalAlignment="Top"
+                           TextAlignment="Center"
+                           Text="публикаций"/>
+            </Grid>
+            
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" 
+                           VerticalAlignment="Bottom"
+                           TextAlignment="Center"
+                           Text="{Binding User.FollowerCount}"/>
+                <TextBlock Grid.Row="1" 
+                           VerticalAlignment="Top"
+                           TextAlignment="Center"
+                           Text="подписчиков"/>
+            </Grid>
+            
+            <Grid Grid.Column="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" 
+                           VerticalAlignment="Bottom"
+                           TextAlignment="Center"
+                           Text="{Binding User.FollowingCount}"/>
+                <TextBlock Grid.Row="1" 
+                           VerticalAlignment="Top"
+                           TextAlignment="Center"
+                           Text="подписок"/>
+            </Grid>
             <!--<Button Command="{Binding UpdateCommand}"
                     HorizontalAlignment="Center" 
                     FontSize="14"
