@@ -46,5 +46,7 @@ namespace Itgm.Interfaces
         /// <param name="count">Количество запрашиваемых твитов.</param>
         /// <returns>Коллекция твитов.</returns>
         Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId);
+
+        Task<UserInfo> UpdateCurrentUser();
     }
 }

@@ -232,15 +232,15 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="UserInfo" />
         /// </returns>
-        Task<IResult<UserInfo>> GetUserAsync(string username);
+        Task<IResult<UserInfo>> GetUserInfoByNameAsync(string userName);
 
         /// <summary>
-        ///     Get currently logged in user info asynchronously
+        /// Get user info by its user id asynchronously
         /// </summary>
-        /// <returns>
-        ///     <see cref="UserInfo" />
-        /// </returns>
-        Task<IResult<UserInfo>> GetCurrentUserAsync();
+        /// <param name="userId"></param>
+        /// <param name="needToUpdate"></param>
+        /// <returns></returns>
+        Task<IResult<UserInfo>> GetUserInfoByIdAsync(string userId);
 
         /// <summary>
         ///     Get tag feed by tag value asynchronously

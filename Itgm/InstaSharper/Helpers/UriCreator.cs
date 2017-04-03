@@ -15,7 +15,7 @@ namespace InstaSharper.Helpers
                 : null;
         }
 
-        public static Uri GetUserUri(string username)
+        public static Uri GetUserSearchUri(string username)
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SEARCH_USERS, out instaUri))
@@ -24,7 +24,7 @@ namespace InstaSharper.Helpers
             return userUriBuilder.Uri;
         }
 
-        public static Uri GetUserInfo(string userPk)
+        public static Uri GetUserInfoById(string userPk)
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO, userPk), out instaUri))

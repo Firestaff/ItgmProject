@@ -134,12 +134,17 @@ namespace Itgm.ViewModels
         /// Запрашивает более старые твиты из сервиса.
         /// </summary>
         /// <param name="maxId">Идентификатор последнего загруженного твита.</param>
-        private async void LoadMediasAsync(long maxId = 0)
+        private async void LoadMediasAsync()
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
             if (_isLongProcessStarted)
             {
                 return;
+            }
+
+            if (Medias.Count == _user.MediaCount)
+            {
+                //_user = _service.GetUserInfo
             }
 
             IsLongProcessStarted = true;
@@ -163,9 +168,9 @@ namespace Itgm.ViewModels
             IsLongProcessStarted = false;
         }
 
-        /// <summary>
-        /// Обработчик события достижения предела запросов.
-        /// </summary>
+        ///// <summary>
+        ///// Обработчик события достижения предела запросов.
+        ///// </summary>
         //private void CheckRateLimitIsOver(object sender, RateLimitEventArgs e)
         //{
         //    if (e.Limit == RateLimitType.TweetsRateLimit)

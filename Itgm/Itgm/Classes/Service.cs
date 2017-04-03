@@ -48,6 +48,13 @@ namespace Itgm.Classes
         #endregion
 
         #region User
+        public async Task<UserInfo> UpdateCurrentUser()
+        {
+            var result = await _app.GetUserInfoByIdAsync(LoggedUser.Id);
+            LoggedUser = result.Value;
+            return LoggedUser;
+        }
+
         public async Task LoginAsync(string login, string password)
         {
             // create user session data and provide login details
