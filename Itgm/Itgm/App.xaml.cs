@@ -38,7 +38,9 @@ namespace Itgm
         {
             _mainWindow = new MainWindow();
             _service = new Service();
-            await _service.LoginAsync("iesopoval", "1234567u");
+            var login = ConfigurationManager.AppSettings["login"];
+            var password = ConfigurationManager.AppSettings["password"];
+            await _service.LoginAsync(login, password);
 
             // Отрисовываем страницу получения логина/пароля
             ResolveViewModel(ViewTypes.Content);
