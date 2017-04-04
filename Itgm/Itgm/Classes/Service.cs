@@ -40,9 +40,9 @@ namespace Itgm.Classes
             return (await _app.GetUserMediaAsync(LoggedUser.UserName, fromId)).Value;
         }
 
-        public async Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId)
+        public async Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId, string fromId)
         {
-            var result = await _app.GetMediaCommentsAsync(mediaId, 1);
+            var result = await _app.GetMediaCommentsAsync(mediaId, fromId);
             return result.Value.Comments;
         }
         #endregion

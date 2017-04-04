@@ -16,6 +16,9 @@ namespace Itgm.ViewModels
         private IService _service;
         private int _commentsCount;
         private int _likesCount;
+        private bool _isLongProcessStarted;
+        private DateTime _takenAt;
+        private Image _image;
 
         public MediaViewModel(InstaMedia media, IService service)
         {
@@ -25,25 +28,74 @@ namespace Itgm.ViewModels
             InitializeViewModel();
         }
 
-        public DateTime TakenAt { get; set; }
-        public string Pk { get; set; }
+        #region Properties
+        public string LikesCount => FormatByThousand(nameof(LikesCount), _likesCount);
 
-        public string InstaIdentifier { get; set; }
-
-        public Image Image { get; set; }
-
-        public UserInfo User { get; set; }
-
-        public string LikesCount => GetThousandCount(_likesCount);
-
-        public string CommentsCount => GetThousandCount(_commentsCount);
-
-        public string NextMaxId { get; set; }
-
-        public InstaUserList Likers { get; set; } = new InstaUserList();
+        public string CommentsCount => FormatByThousand(nameof(CommentsCount), _commentsCount);
 
         public ObservableCollection<InstaComment> Comments { get; set; } 
             = new ObservableCollection<InstaComment>();
+
+        /// <summary>
+        /// Показывает запущена ли длительная операция.
+        /// </summary>
+        public bool IsLongProcessStarted
+        {
+            get
+            {
+                return _isLongProcessStarted;
+            }
+            private set
+            {
+                if (_isLongProcessStarted == value)
+                {
+                    return;
+                }
+
+                _isLongProcessStarted = value;
+                OnPropertyChanged(nameof(IsLongProcessStarted));
+            }
+        }
+
+        public DateTime TakenAt
+        {
+            get
+            {
+                return _takenAt;
+            }
+            private set
+            {
+                if (_takenAt == value)
+                {
+                    return;
+                }
+
+                _takenAt = value;
+                OnPropertyChanged(nameof(TakenAt));
+            }
+        }
+
+        public string Pk { get; private set; }
+
+
+        public Image Image
+        {
+            get
+            {
+                return _image;
+            }
+            private set
+            {
+                if (_image == value)
+                {
+                    return;
+                }
+
+                _image = value;
+                OnPropertyChanged(nameof(Image));
+            }
+        }
+        #endregion
 
         public override void InitializeViewModel()
         {
@@ -51,35 +103,55 @@ namespace Itgm.ViewModels
             _likesCount = _model.LikesCount;
 
             Image = _model.Images[0];
-            InstaIdentifier = _model.InstaIdentifier;
-            Likers = _model.Likers;
-            NextMaxId = _model.NextMaxId;
             Pk = _model.Pk;
             TakenAt = _model.TakenAt;
-            User = _model.User;
         }
 
         public override void ClearViewModel()
         {
+            _commentsCount = 0;
+            _likesCount = 0;
+
+            Image = null;
+            Pk = _model.Pk;
+            TakenAt = _model.TakenAt;
             Comments.Clear();
         }
 
         public override async void UpdateViewModel()
         {
-            Comments.Clear();
-            var comments = (await _service.GetMediaCommentsAsync(Pk))
-                            .Where(c => c.User.Id != _service.LoggedUser.Id)
-                            .ToList();
-            comments.Reverse();
-
-            //for (int i = 0; i < 20; i++)
+            if (Comments.Count == 0)
             {
-
-                comments.ForEach(c => Comments.Add(c));
+                await LoadComments();
             }
         }
 
-        private string GetThousandCount(int value)
+        public async Task LoadComments()
+        {
+            // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
+            if (_isLongProcessStarted)
+            {
+                return;
+            }
+
+            IsLongProcessStarted = true;
+
+            var nextId = Comments.LastOrDefault()?.Pk;
+
+            var result = await _service.GetMediaCommentsAsync(Pk, nextId);
+            if (result != null && IsLongProcessStarted)
+            {
+                var comments = result.Where(c => c.User.Id != _service.LoggedUser.Id)
+                                     .ToList();
+
+                var commentsCount = Comments.Count;
+                comments.ForEach(c => Comments.Insert(commentsCount, c));
+            }
+
+            IsLongProcessStarted = false;
+        }
+
+        private string FormatByThousand(string prop, int value)
         {
             if (value < 1000)
             {

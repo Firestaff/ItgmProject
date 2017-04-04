@@ -24,11 +24,6 @@ namespace Itgm.ViewModels
         /// </summary>
         private bool _isLongProcessStarted;
 
-        /// <summary>
-        /// Маркер отмены задания.
-        /// </summary>
-        private CancellationTokenSource _cts;
-
         private UserInfo _user; 
 
         /// <summary>
@@ -38,6 +33,8 @@ namespace Itgm.ViewModels
         public CommentsViewModel(IService service) : base(service, null)
         {
             _user = service.LoggedUser;
+            LoadMediasCommand = new ActionCommand(LoadMediasAsync);
+            LoadCommentsCommand = new ActionCommand(LoadCommentsAsync);
             //SetCurrentMediaCommand = new ActionCommand((m => SetCurrentMedia(m)));
             //_service.RateLimitOver += CheckRateLimitIsOver;
         }
@@ -95,12 +92,15 @@ namespace Itgm.ViewModels
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Команда подгрузки постов.
+        /// </summary>
+        public ICommand LoadMediasCommand { get; private set; }
 
         /// <summary>
-        /// Команда подгрузки твитов.
+        /// Команда подгрузки комментов.
         /// </summary>
-        public ICommand SetCurrentMediaCommand { get; private set; }
-
+        public ICommand LoadCommentsCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -130,10 +130,6 @@ namespace Itgm.ViewModels
             InitializeViewModel();
         }
 
-        /// <summary>
-        /// Запрашивает более старые твиты из сервиса.
-        /// </summary>
-        /// <param name="maxId">Идентификатор последнего загруженного твита.</param>
         private async void LoadMediasAsync()
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
@@ -142,17 +138,19 @@ namespace Itgm.ViewModels
                 return;
             }
 
+            IsLongProcessStarted = true;
+
+            _user = await _service.UpdateCurrentUser();
+
             if (Medias.Count == _user.MediaCount)
             {
-                //_user = _service.GetUserInfo
+                IsLongProcessStarted = false;
+                return;
             }
-
-            IsLongProcessStarted = true;
-            _cts = new CancellationTokenSource();
 
             var nextId = Medias.LastOrDefault()?.Pk;
 
-            var result = await Task.Run(() => _service.GetCurrentUserMediasAsync(nextId), _cts.Token);
+            var result = await _service.GetCurrentUserMediasAsync(nextId);
             if (result != null && IsLongProcessStarted)
             {
                 var medias = result.ToList();
@@ -163,25 +161,16 @@ namespace Itgm.ViewModels
                 CurrentMedia = Medias.FirstOrDefault();
             }
 
-
-
             IsLongProcessStarted = false;
         }
 
-        ///// <summary>
-        ///// Обработчик события достижения предела запросов.
-        ///// </summary>
-        //private void CheckRateLimitIsOver(object sender, RateLimitEventArgs e)
-        //{
-        //    if (e.Limit == RateLimitType.TweetsRateLimit)
-        //    {
-        //        if (_cts != null && !_cts.IsCancellationRequested)
-        //        {
-        //            _cts.Cancel();
-        //            MessageBox.Show($"Вы достигли предела запросов, повторите попытку через {e.RemainingMinutes} минут.");
-        //        }
-        //    }
-        //}
+        private async void LoadCommentsAsync()
+        {
+            if (CurrentMedia != null)
+            {
+                await CurrentMedia.LoadComments();
+            }
+        }
         #endregion
     }
 }

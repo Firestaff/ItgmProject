@@ -14,6 +14,10 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
         <ListView ItemsSource="{Binding Medias, Mode=OneTime}"
                   Name="Medias"
@@ -159,9 +163,9 @@
 
         </ListView>
 
-        <ListView ItemsSource="{Binding CurrentMedia.Comments}"
+        <ListView Grid.Column="1"
+                  ItemsSource="{Binding CurrentMedia.Comments}"
                   Foreground="White"
-                  Grid.Column="1"
                   Margin="3,0,0,0"
                   Background="{StaticResource OpaqueGrayBrush}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -198,8 +202,24 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        
+        <Button Grid.Column="0" Grid.Row="1"
+                Height="50" 
+                FontSize="22"
+                Content="загрузить еще постов"
+                Style="{StaticResource DefaultButtonStyle}"
+                Command="{Binding LoadMediasCommand}"/>
+        
+        <Button Grid.Column="1" Grid.Row="1"
+                Height="50" 
+                FontSize="22"
+                Content="загрузить еще комментов"
+                Style="{StaticResource DefaultButtonStyle}"
+                Command="{Binding LoadCommentsCommand}"/>
 
-        <v:LongProcessControl Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                              Opacity="0.3" />
+        <v:LongProcessControl Grid.Column="0" Grid.Row="1"
+                              Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                              IsColorInverted="true"
+                              Margin="2,2,2,2" Height="46"/>
     </Grid>
 </UserControl>

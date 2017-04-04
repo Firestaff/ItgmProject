@@ -89,17 +89,18 @@
 
     <Style x:Key="DefaultButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
-        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="{StaticResource OpaqueGrayBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Border.CornerRadius" Value="0"/>
         
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Foreground" Value="{StaticResource TwitterAdditionalTextBrush}"/>
+        <Setter Property="FontFamily" Value="Gotham Narrow"/>
         
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="Padding" Value="5,5,5,7"/>
+        <Setter Property="Padding" Value="5,5,5,5"/>
         
         <Setter Property="Template">
             <Setter.Value>
@@ -110,8 +111,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding Border.CornerRadius}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}">
                         <ContentPresenter Content="{TemplateBinding Content}" 
                                           Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -385,7 +386,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Style.Triggers>
             <Trigger Property="IsColorInverted" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource ItgmBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TwitterAdditionalTextBrush}"/>
                 <Setter Property="Background" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
             </Trigger>
         </Style.Triggers>

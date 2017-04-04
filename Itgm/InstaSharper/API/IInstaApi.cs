@@ -351,7 +351,7 @@ namespace InstaSharper.API
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages);
+        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, string fromId);
 
         /// <summary>
         ///     Get media comments

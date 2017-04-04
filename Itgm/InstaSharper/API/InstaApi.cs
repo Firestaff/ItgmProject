@@ -29,12 +29,9 @@ namespace InstaSharper.API
         private readonly UserSessionData _userSession;
         public bool IsUserAuthenticated { get; private set; }
 
-        public InstaApi(UserSessionData user,
-            ILogger logger,
-            HttpClient httpClient,
-            HttpClientHandler httpHandler,
-            ApiRequestMessage requestMessage,
-            AndroidDevice deviceInfo)
+        public InstaApi(UserSessionData user, ILogger logger,
+                        HttpClient httpClient, HttpClientHandler httpHandler,
+                        ApiRequestMessage requestMessage, AndroidDevice deviceInfo)
         {
             _userSession = user;
             _logger = logger;
@@ -43,8 +40,6 @@ namespace InstaSharper.API
             _requestMessage = requestMessage;
             _deviceInfo = deviceInfo;
         }
-
-
 
         public async Task<IResult<bool>> LoginAsync()
         {
@@ -83,7 +78,7 @@ namespace InstaSharper.API
                 {
                     var userId = Convert<UserInfo>(json).Id;
                     _userSession.RankToken = $"{userId}_{_requestMessage.phone_id}";
-                    _userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
+                    _userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
                     IsUserAuthenticated = true;
 
                     return Result.Success(true);
@@ -192,36 +187,25 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0)
+        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, string fromId)
         {
-            ValidateCurrentUser();
-            ValidateLoggedIn();
             try
             {
-                if (maxPages == 0) maxPages = int.MaxValue;
                 var commentsUri = UriCreator.GetMediaCommentsUri(mediaId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUri, _deviceInfo);
+                var commentsUriMaxId = new UriBuilder(commentsUri) { Query = $"max_id={fromId}" }.Uri;
+
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUriMaxId, _deviceInfo);
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.Fail($"Unexpected response status: {response.StatusCode}", (InstaCommentList)null);
-                var commentListResponse = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
-                var converter = ConvertersFabric.GetCommentListConverter(commentListResponse);
-                var instaComments = converter.Convert();
-                instaComments.Pages++;
-                var nextId = commentListResponse.NextMaxId;
-                while (commentListResponse.MoreComentsAvailable && instaComments.Pages < maxPages)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    if (string.IsNullOrEmpty(nextId)) break;
-                    var nextComments = await GetCommentListWithMaxIdAsync(mediaId, nextId);
-                    if (!nextComments.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextComments.Info.Message}", instaComments);
-                    nextId = nextComments.Value.NextMaxId;
-                    converter = ConvertersFabric.GetCommentListConverter(nextComments.Value);
-                    instaComments.Comments.AddRange(converter.Convert().Comments);
-                    instaComments.Pages++;
+                    var commentsResponse = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
+                    var converter = ConvertersFabric.GetCommentListConverter(commentsResponse);
+                    var comments = converter.Convert();
+                    return Result.Success(comments);
                 }
-                return Result.Success(instaComments);
+
+                return Result.Fail("", (InstaCommentList)null);
             }
             catch (Exception exception)
             {
