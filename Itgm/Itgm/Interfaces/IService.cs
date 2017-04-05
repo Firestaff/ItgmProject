@@ -37,7 +37,8 @@ namespace Itgm.Interfaces
         /// </summary>
         Task LogoutAsync();
 
-        Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId, string fromId);
+        Task<IEnumerable<InstaComment>> GetNewMediaCommentsAsync(string mediaId, string fromId);
+        Task<IEnumerable<InstaComment>> GetOldMediaCommentsAsync(string mediaId, string fromId);
 
         /// <summary>
         /// Запрос твитов для залогиненного пользователя.

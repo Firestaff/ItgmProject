@@ -136,17 +136,25 @@ namespace Itgm.ViewModels
 
             IsLongProcessStarted = true;
 
-            var nextId = Comments.LastOrDefault()?.Pk;
+            var fromId = Comments.LastOrDefault()?.Pk;
 
-            var result = await _service.GetMediaCommentsAsync(Pk, nextId);
-            if (result != null && IsLongProcessStarted)
+            if (fromId != null)
             {
-                var comments = result.Where(c => c.User.Id != _service.LoggedUser.Id)
-                                     .ToList();
-
-                var commentsCount = Comments.Count;
-                comments.ForEach(c => Comments.Insert(commentsCount, c));
+                while (true)
+                {
+                    var topComments = await _service.GetNewMediaCommentsAsync(Pk, Comments.First().Pk);
+                    if (topComments.Count() == 0)
+                    {
+                        break;
+                    }
+                    topComments.ToList().ForEach(c => Comments.Insert(0, c));
+                }
             }
+
+            var result = await _service.GetOldMediaCommentsAsync(Pk, fromId);
+            var comments = result.Reverse().ToList();
+
+            comments.ForEach(c => Comments.Add(c));
 
             IsLongProcessStarted = false;
         }

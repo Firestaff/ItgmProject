@@ -79,6 +79,7 @@ namespace InstaSharper.API
                     var userId = Convert<UserInfo>(json).Id;
                     _userSession.RankToken = $"{userId}_{_requestMessage.phone_id}";
                     _userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
+                    //_userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
                     IsUserAuthenticated = true;
 
                     return Result.Success(true);
@@ -187,12 +188,12 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, string fromId)
+        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, string fromId, string mode)
         {
             try
             {
                 var commentsUri = UriCreator.GetMediaCommentsUri(mediaId);
-                var commentsUriMaxId = new UriBuilder(commentsUri) { Query = $"max_id={fromId}" }.Uri;
+                var commentsUriMaxId = new UriBuilder(commentsUri) { Query = $"{mode}_id={fromId}" }.Uri;
 
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUriMaxId, _deviceInfo);
                 var response = await _httpClient.SendAsync(request);

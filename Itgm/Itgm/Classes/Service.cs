@@ -40,9 +40,15 @@ namespace Itgm.Classes
             return (await _app.GetUserMediaAsync(LoggedUser.UserName, fromId)).Value;
         }
 
-        public async Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId, string fromId)
+        public async Task<IEnumerable<InstaComment>> GetNewMediaCommentsAsync(string mediaId, string fromId)
         {
-            var result = await _app.GetMediaCommentsAsync(mediaId, fromId);
+            var result = await _app.GetMediaCommentsAsync(mediaId, fromId, "min");
+            return result.Value.Comments;
+        }
+
+        public async Task<IEnumerable<InstaComment>> GetOldMediaCommentsAsync(string mediaId, string fromId)
+        {
+            var result = await _app.GetMediaCommentsAsync(mediaId, fromId, "max");
             return result.Value.Comments;
         }
         #endregion

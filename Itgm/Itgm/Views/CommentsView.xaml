@@ -21,8 +21,7 @@
 
         <ListView ItemsSource="{Binding Medias, Mode=OneTime}"
                   Name="Medias"
-                  MinWidth="425"
-                  MaxWidth="600"
+                  MaxWidth="630"
                   SelectedItem="{Binding CurrentMedia}"
                   DisplayMemberPath="{Binding Pk}"
                   Padding="5"
@@ -35,33 +34,30 @@
                   Unloaded="Medias_Unloaded">
             <ListView.Resources>
                 <Style TargetType="{x:Type ScrollBar}">
-                    <Setter Property="Template"
-                            Value="{StaticResource VerticalScrollBar}" />
+                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Margin" Value="0,8,0,8" />
                 </Style>
 
                 <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="BorderThickness"
-                            Value="5" />
+                    <Setter Property="BorderThickness" Value="5" />
                     <!--<Setter Property="BorderBrush" Value="{StaticResource TwitterMainThemeBrush}" />-->
-                    <Setter Property="BorderBrush"
-                            Value="Transparent" />
-                    <Setter Property="Margin"
-                            Value="3" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Margin" Value="3" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
                                 <Grid Name="MainItemGrid"
-                                      Width="140"
-                                      Height="140"
+                                      Width="140" Height="140"
                                       Background="{StaticResource TwitterTweetBackgroundBrush}"
                                       HorizontalAlignment="Stretch">
-
 
                                     <Grid Name="MainContentImageGrid"
                                           DataContext="{Binding Image, Mode=OneTime}">
                                         <Image Source="{Binding Url, IsAsync=True, Converter={StaticResource ImageAsyncConverter}}"
+                                               Stretch="UniformToFill"
+                                               StretchDirection="Both"
                                                Name="ContentImage">
                                         </Image>
                                     </Grid>
@@ -155,6 +151,7 @@
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal"
+                               MinWidth="580"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
                                VirtualizingPanel.ScrollUnit="Pixel" />
@@ -162,7 +159,19 @@
             </ListView.ItemsPanel>
 
         </ListView>
+        
+        <Button Grid.Column="0" Grid.Row="1"
+                Height="50" 
+                FontSize="22"
+                Content="загрузить еще постов"
+                Style="{StaticResource DefaultButtonStyle}"
+                Command="{Binding LoadMediasCommand}"/>
 
+        <v:LongProcessControl Grid.Column="0" Grid.Row="1"
+                              Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                              IsColorInverted="true"
+                              Margin="2,2,2,2" Height="46"/>
+        
         <ListView Grid.Column="1"
                   ItemsSource="{Binding CurrentMedia.Comments}"
                   Foreground="White"
@@ -172,10 +181,12 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   VirtualizingPanel.ScrollUnit="Pixel"
                   BorderThickness="0">
+            
             <ListView.Resources>
                 <Style TargetType="{x:Type ScrollBar}">
-                    <Setter Property="Template"
-                            Value="{StaticResource VerticalScrollBar}" />
+                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Margin" Value="0,8,0,8" />
                 </Style>
             </ListView.Resources>
 
@@ -188,13 +199,13 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0"
-                                   Margin="2"
+                                   Margin="5"
                                    FontWeight="Bold"
                                    TextAlignment="Left"
                                    Text="{Binding User.UserName, StringFormat={}{0}:}" />
 
                         <TextBox Grid.Column="1"
-                                 Margin="2"
+                                 Margin="5"
                                  TextWrapping="WrapWithOverflow"
                                  Text="{Binding Text}">
                         </TextBox>
@@ -203,23 +214,16 @@
             </ListView.ItemTemplate>
         </ListView>
         
-        <Button Grid.Column="0" Grid.Row="1"
-                Height="50" 
-                FontSize="22"
-                Content="загрузить еще постов"
-                Style="{StaticResource DefaultButtonStyle}"
-                Command="{Binding LoadMediasCommand}"/>
-        
-        <Button Grid.Column="1" Grid.Row="1"
+        <Button Grid.Column="1" Grid.Row="1" Margin="3,0,0,0"
                 Height="50" 
                 FontSize="22"
                 Content="загрузить еще комментов"
                 Style="{StaticResource DefaultButtonStyle}"
                 Command="{Binding LoadCommentsCommand}"/>
-
-        <v:LongProcessControl Grid.Column="0" Grid.Row="1"
-                              Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+        
+        <v:LongProcessControl Grid.Column="1" Grid.Row="1"
+                              Visibility="{Binding CurrentMedia.IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                               IsColorInverted="true"
-                              Margin="2,2,2,2" Height="46"/>
+                              Margin="5,2,2,2" Height="46"/>
     </Grid>
 </UserControl>

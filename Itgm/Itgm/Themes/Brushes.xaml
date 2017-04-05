@@ -7,7 +7,7 @@
     <Color x:Key="TwitterLightGrayColor">#e1e8ed</Color>
     <Color x:Key="TwitterIconColor">#BDC6CC</Color>
     <Color x:Key="TwitterTweetBackgroundColor">#ffffff</Color>
-    <Color x:Key="OpaqueGrayColor">#AA68768A</Color>
+    <Color x:Key="OpaqueGrayColor">#AA2D2D30</Color>
     <Color x:Key="GrayColor">#9AA4B1</Color>
     
 
