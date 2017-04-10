@@ -20,10 +20,10 @@ namespace Itgm.Interfaces
         /// </summary>
         WebExceptionStatus AuthenticationState { get; }
 
-        ///// <summary>
-        ///// Событие оповещающее о том, что кончились запросы.
-        ///// </summary>
-        //event EventHandler<RateLimitEventArgs> RateLimitOver;
+        /// <summary>
+        /// Текущий пользователь.
+        /// </summary>
+        UserInfo LoggedUser { get; }
 
         /// <summary>
         /// Попытка авторизации пользователя.
@@ -37,34 +37,13 @@ namespace Itgm.Interfaces
         /// </summary>
         Task LogoutAsync();
 
-        /// <summary>
-        /// Получение подписчиков и подписок для пользователя с заданным идентификатором.
-        /// </summary>
-        /// <param name="userId">Идентификатор пользователя.</param>
-        /// <returns>Список подписчиков и подписок(не содержит дубликатов).</returns>
-        IEnumerable<long> GetFollowersAndSubsIds(long userId);
+        Task<IEnumerable<InstaComment>> GetNewMediaCommentsAsync(string mediaId, string fromId);
+        Task<IEnumerable<InstaComment>> GetOldMediaCommentsAsync(string mediaId, string fromId);
 
-        Task<IEnumerable<InstaComment>> GetMediaCommentsAsync(string mediaId);
 
-        /// <summary>
-        /// Запрос твитов для залогиненного пользователя.
-        /// </summary>
-        /// <param name="maxId">Максимальный идентификатор твита с которого необходимо провести запрос.</param>
-        /// <param name="count">Количество запрашиваемых твитов.</param>
-        /// <returns>Коллекция твитов.</returns>
-        Task<IEnumerable<InstaMedia>> GetMediasAsync();
+        Task<IEnumerable<InstaMedia>> GetCurrentUserNewMediasAsync(string fromId);
+        Task<IEnumerable<InstaMedia>> GetCurrentUserOldMediasAsync(string fromId);
 
-        /// <summary>
-        /// Получение залогиненного пользователя.
-        /// </summary>
-        /// <returns>Текущий пользователь.</returns>
-        InstaUser GetUserInfo();
-
-        /// <summary>
-        /// Получение имени пользователя с указанным идентификатором.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>Имя пользователя.</returns>
-        string GetUserName(long userId);
+        Task<UserInfo> UpdateCurrentUser();
     }
 }

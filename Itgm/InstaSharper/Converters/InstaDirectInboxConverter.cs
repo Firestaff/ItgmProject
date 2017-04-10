@@ -46,7 +46,7 @@ namespace InstaSharper.Converters
             }
             else
             {
-                inbox.PendingUsers = new List<InstaUser>();
+                inbox.PendingUsers = new List<UserInfo>();
 
                 foreach (var user in SourceObject.PendingUsers)
                 {

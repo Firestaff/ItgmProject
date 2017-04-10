@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows.Input;
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
-using System.Threading.Tasks;
-using Itgm.Models;
+using InstaSharper.Classes.Models;
+using System.Collections.Generic;
+using System.Timers;
+using System.Windows;
 
 namespace Itgm.ViewModels
 {
@@ -24,10 +25,8 @@ namespace Itgm.ViewModels
         /// </summary>
         private bool _isLongProcessStarted;
 
-        /// <summary>
-        /// Маркер отмены задания.
-        /// </summary>
-        private CancellationTokenSource _cts;
+        private UserInfo _user;
+        private Timer _timer;
 
         /// <summary>
         /// Создание вью модели.
@@ -35,8 +34,17 @@ namespace Itgm.ViewModels
         /// <param name="service">Сервис.</param>
         public CommentsViewModel(IService service) : base(service, null)
         {
-            //SetCurrentMediaCommand = new ActionCommand((m => SetCurrentMedia(m)));
-            //_service.RateLimitOver += CheckRateLimitIsOver;
+            LoadMediasCommand = new ActionCommand(() => LoadMediasAsync(false));
+            LoadCommentsCommand = new ActionCommand(LoadCommentsAsync);
+            UpdateMediasCommand = new ActionCommand(UpdateMedias);
+            UpdateCommentsCommand = new ActionCommand(UpdateComments);
+
+            InitializeViewModel();
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(UpdateViewModel);
         }
 
         #region Properties
@@ -56,8 +64,9 @@ namespace Itgm.ViewModels
                     return;
                 }
 
+                _currentMedia?.StopTimer();
                 _currentMedia = value;
-                UpdateMediaCommentsAsync(_currentMedia);
+                _currentMedia?.UpdateComments();
                 OnPropertyChanged("CurrentMedia");
             }
         }
@@ -78,6 +87,15 @@ namespace Itgm.ViewModels
                     return;
                 }
 
+                if (value == true)
+                {
+                    _timer.Stop();
+                }
+                else
+                {
+                    _timer.Start();
+                }
+
                 _isLongProcessStarted = value;
                 OnPropertyChanged("IsLongProcessStarted");
             }
@@ -92,12 +110,25 @@ namespace Itgm.ViewModels
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Команда подгрузки постов.
+        /// </summary>
+        public ICommand LoadMediasCommand { get; private set; }
 
         /// <summary>
-        /// Команда подгрузки твитов.
+        /// Команда подгрузки комментов.
         /// </summary>
-        public ICommand SetCurrentMediaCommand { get; private set; }
+        public ICommand LoadCommentsCommand { get; private set; }
 
+        /// <summary>
+        /// Команда перезагрузки комментов.
+        /// </summary>
+        public ICommand UpdateMediasCommand { get; private set; }
+
+        /// <summary>
+        /// Команда перезагрузки комментов.
+        /// </summary>
+        public ICommand UpdateCommentsCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -107,8 +138,11 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            ClearViewModel();
-            LoadTweetsAsync();
+            _user = _service.LoggedUser;
+            _timer = new Timer(60000);
+            _timer.Elapsed += Timer_Elapsed;
+
+            LoadMediasAsync(false);
         }
 
         /// <summary>
@@ -116,6 +150,16 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void ClearViewModel()
         {
+            CurrentMedia = null;
+
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Elapsed -= Timer_Elapsed;
+                _timer.Dispose();
+            }
+            _user = null;
+
             Medias.Clear();
         }
 
@@ -124,59 +168,88 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void UpdateViewModel()
         {
-            InitializeViewModel();
+            if (IsLongProcessStarted)
+            {
+                return;
+            }
+
+            LoadMediasAsync(true);
         }
 
-        /// <summary>
-        /// Реагирует на команду запроса твитов.
-        /// </summary>
-        private async void UpdateMediaCommentsAsync(MediaViewModel m)
-        {
-            m.Comments.Clear();
-            var comments = (await _service.GetMediaCommentsAsync(m.Pk)).ToList();
-            comments.ForEach(c => m.Comments.Add(c));
-        }
-
-        /// <summary>
-        /// Запрашивает более старые твиты из сервиса.
-        /// </summary>
-        /// <param name="maxId">Идентификатор последнего загруженного твита.</param>
-        private async void LoadTweetsAsync(long maxId = 0)
+        private async void LoadMediasAsync(bool onlyNew)
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
-            if (_isLongProcessStarted)
+            if (IsLongProcessStarted)
             {
                 return;
             }
 
             IsLongProcessStarted = true;
 
-            _cts = new CancellationTokenSource();
+            _user = await _service.UpdateCurrentUser();
 
-            var result = await Task.Run(() => _service.GetMediasAsync(), _cts.Token);
-            if (result != null && IsLongProcessStarted)
+            var fromId = Medias.LastOrDefault()?.Pk;
+            if (fromId != null)
             {
+                int firstEntry = 0;
+                var topMedias = new List<InstaMedia>();
+
+                while (true)
+                {
+                    var firstId = topMedias.LastOrDefault()?.Pk; //"1375636587895080536";
+                    var newMedias = await _service.GetCurrentUserOldMediasAsync(firstId);
+                    topMedias.AddRange(newMedias);
+
+                    firstEntry = topMedias.FindIndex(e => e.Pk == Medias.First().Pk);
+                    if (firstEntry != -1 || newMedias.Count() == 0)
+                    {
+                        break;
+                    }
+                }
+
+                topMedias.RemoveRange(firstEntry, topMedias.Count - firstEntry);
+                topMedias.Reverse();
+                topMedias.ForEach(m => Medias.Insert(0, new MediaViewModel(m, _service)));
+            }
+
+            if (!onlyNew || Medias.Count == 0)
+            {
+                var result = await _service.GetCurrentUserOldMediasAsync(fromId);
                 var medias = result.ToList();
-                medias.ForEach(m => Medias.Add(new MediaViewModel(m)));
+
+                medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));
+            }
+
+            if (CurrentMedia == null)
+            {
+                CurrentMedia = Medias.FirstOrDefault();
             }
 
             IsLongProcessStarted = false;
         }
 
-        /// <summary>
-        /// Обработчик события достижения предела запросов.
-        /// </summary>
-        //private void CheckRateLimitIsOver(object sender, RateLimitEventArgs e)
-        //{
-        //    if (e.Limit == RateLimitType.TweetsRateLimit)
-        //    {
-        //        if (_cts != null && !_cts.IsCancellationRequested)
-        //        {
-        //            _cts.Cancel();
-        //            MessageBox.Show($"Вы достигли предела запросов, повторите попытку через {e.RemainingMinutes} минут.");
-        //        }
-        //    }
-        //}
+        private void UpdateMedias()
+        {
+            ClearViewModel();
+            InitializeViewModel();
+        }
+
+        private async void LoadCommentsAsync()
+        {
+            if (CurrentMedia != null)
+            {
+                await CurrentMedia.LoadCommentsAsync(false);
+            }
+        }
+
+        private void UpdateComments()
+        {
+            if (CurrentMedia != null)
+            {
+                CurrentMedia.Comments.Clear();
+                CurrentMedia.UpdateComments();
+            }
+        }
         #endregion
     }
 }

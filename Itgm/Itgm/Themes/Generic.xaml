@@ -12,6 +12,7 @@
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <converters:HtmlToTextConverter x:Key="HtmlToTextConverter" />
     <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    <converters:ImageAsyncConverter x:Key="ImageAsyncConverter" />
   
 
     <!--Data templates-->
@@ -67,18 +68,8 @@
 
     <!--Defined styles-->
     <Style x:Key="DefaultWindowStyle" TargetType="{x:Type Window}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <ImageBrush ImageSource="..\\Images/background.jpg" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Background" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
-        <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="BorderBrush">
-            <Setter.Value>
-                <ImageBrush ImageSource="..\\Images/background1.jpg"/>
-            </Setter.Value>
-        </Setter>
 
         <Setter Property="Left" Value="0"/>
         <Setter Property="Top" Value="0"/>
@@ -87,28 +78,29 @@
         <Setter Property="FontWeight" Value="UltraLight"/>
         <Setter Property="FontFamily" Value="DejaVu Sans Mono"/>
 
-        <Setter Property="MinHeight" Value="600"/>
-        <Setter Property="MinWidth" Value="405"/>
+        <Setter Property="MinHeight" Value="650"/>
+        <Setter Property="MinWidth" Value="1050"/>
 
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="AllowsTransparency" Value="True" />
-        <Setter Property="WindowStyle" Value="None"/>
+        <!--<Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="WindowStyle" Value="None"/>-->
         <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
     </Style>
 
     <Style x:Key="DefaultButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
-        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="{StaticResource OpaqueGrayBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Border.CornerRadius" Value="0"/>
         
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Foreground" Value="{StaticResource TwitterAdditionalTextBrush}"/>
+        <Setter Property="FontFamily" Value="Gotham Narrow"/>
         
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="Padding" Value="5,5,5,7"/>
+        <Setter Property="Padding" Value="5,5,5,5"/>
         
         <Setter Property="Template">
             <Setter.Value>
@@ -119,8 +111,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding Border.CornerRadius}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}">
                         <ContentPresenter Content="{TemplateBinding Content}" 
                                           Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -155,8 +147,8 @@
         <Setter Property="FontFamily" Value="Gotham Narrow"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="TextOptions.TextHintingMode" Value="Animated"/>
-        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
-        <Setter Property="TextOptions.TextRenderingMode" Value="Auto"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -168,6 +160,37 @@
                 <Setter Property="Visibility" Value="Collapsed"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="SelectableTextBlockStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontFamily" Value="Gotham Narrow"/>
+        <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+        <Setter Property="Padding" Value="2,0,2,0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="TextOptions.TextHintingMode" Value="Auto"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="TextOptions.TextRenderingMode" Value="Auto"/>
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        
+        <!--<Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border x:Name="border" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}"
+                            ClipToBounds="False">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>-->
     </Style>
 
     <Style x:Key="PincodeTextBoxStyle" TargetType="{x:Type TextBox}">
@@ -376,7 +399,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Style.Triggers>
             <Trigger Property="IsColorInverted" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource ItgmBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TwitterAdditionalTextBrush}"/>
                 <Setter Property="Background" Value="{StaticResource TwitterTweetBackgroundBrush}"/>
             </Trigger>
         </Style.Triggers>
@@ -386,6 +409,7 @@
     <Style TargetType="{x:Type v:LongProcessControl}" BasedOn="{StaticResource DefaultLongProcessControlStyle}" />
     <Style TargetType="{x:Type Window}" BasedOn="{StaticResource DefaultWindowStyle}" />
     <Style TargetType="{x:Type Image}" BasedOn="{StaticResource HighQualityImageStyle}" />
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource SelectableTextBlockStyle}" />
     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TwitterTextBlockStyle}" />
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource LightButtonStyle}" />
 </ResourceDictionary>

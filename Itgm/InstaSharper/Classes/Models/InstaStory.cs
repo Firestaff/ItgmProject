@@ -8,7 +8,7 @@ namespace InstaSharper.Classes.Models
 
         public DateTime ExpiringAt { get; set; }
 
-        public InstaUser User { get; set; }
+        public UserInfo User { get; set; }
 
         public string SourceToken { get; set; }
 

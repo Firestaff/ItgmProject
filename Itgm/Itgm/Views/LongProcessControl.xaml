@@ -8,7 +8,7 @@
              xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
              Name="LongProcess">
     
-    <Viewbox MaxWidth="150" MinHeight="50">
+    <Viewbox MaxWidth="150" MinHeight="30">
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center">
             <Grid.RowDefinitions>
@@ -20,6 +20,11 @@
                        TextAlignment="Center" 
                        Foreground="{Binding ElementName=LongProcess, Path=Foreground}"
                        FontSize="30"
+                       FontFamily="Gotham Narrow"
+                       FontWeight="Medium"
+                       TextOptions.TextFormattingMode="Ideal"
+                       TextOptions.TextRenderingMode="ClearType"
+                       TextOptions.TextHintingMode="Animated"
                        Text="Загрузка..."/>
 
             <ed:Arc ArcThicknessUnit="Pixel" 

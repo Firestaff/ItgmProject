@@ -1,13 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color x:Key="TwitterMainThemeColor">#55acee</Color>
+    <Color x:Key="TwitterMainThemeColor">#1CA0FF</Color>
     <Color x:Key="TwitterMainTextColor">#292f33</Color>
     <Color x:Key="TwitterAdditionalTextColor">#66757f</Color>
     <Color x:Key="TwitterLightGrayColor">#e1e8ed</Color>
     <Color x:Key="TwitterIconColor">#BDC6CC</Color>
     <Color x:Key="TwitterTweetBackgroundColor">#ffffff</Color>
-    <Color x:Key="OpaqueGrayColor">#AA3F3F3F</Color>
+    <Color x:Key="OpaqueGrayColor">#AA2D2D30</Color>
+    <Color x:Key="GrayColor">#9AA4B1</Color>
     
 
     <SolidColorBrush x:Key="TwitterMainThemeBrush" Color="{StaticResource TwitterMainThemeColor}"/>
@@ -17,6 +18,7 @@
     <SolidColorBrush x:Key="TwitterIconBrush" Color="{StaticResource TwitterIconColor}"/>
     <SolidColorBrush x:Key="TwitterTweetBackgroundBrush" Color="{StaticResource TwitterTweetBackgroundColor}"/>
     <SolidColorBrush x:Key="OpaqueGrayBrush" Color="{StaticResource OpaqueGrayColor}"/>
+    <SolidColorBrush x:Key="GrayBrush" Color="{StaticResource GrayColor}"/>
 
     <LinearGradientBrush x:Key="CuttedWhiteFillBrush" StartPoint="0,1" EndPoint="0,0">
         <GradientStop Color="#FFFFFFFF" Offset="0.2"/>

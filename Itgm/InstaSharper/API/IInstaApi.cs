@@ -36,24 +36,24 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaFeed" />
         /// </returns>
-        IResult<InstaFeed> GetUserTimelineFeed(int maxPages = 0);
+        IResult<InstaFeed> GetUserTimelineFeed(int maxPages);
 
         /// <summary>
         ///     Get user explore feed
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns><see cref="InstaFeed" />></returns>
-        IResult<InstaFeed> GetExploreFeed(int maxPages = 0);
+        IResult<InstaFeed> GetExploreFeed(int maxPages);
 
         /// <summary>
         ///     Get all user media by username
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="fromId">Previous getting last media id.</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        IResult<InstaMediaList> GetUserMedia(string username, int maxPages = 0);
+        IResult<InstaMediaList> GetUserMedia(string username, string fromId);
 
         /// <summary>
         ///     Get media by its id (code)
@@ -69,17 +69,17 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        IResult<InstaUser> GetUser(string username);
+        IResult<UserInfo> GetUser(string username);
 
         /// <summary>
         ///     Get currently logged in user info
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        IResult<InstaUser> GetCurrentUser();
+        IResult<UserInfo> GetCurrentUser();
 
         /// <summary>
         ///     Get tag feed by tag value
@@ -89,7 +89,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaFeed" />
         /// </returns>
-        IResult<InstaFeed> GetTagFeed(string tag, int maxPages = 0);
+        IResult<InstaFeed> GetTagFeed(string tag, int maxPages);
 
         /// <summary>
         ///     Get followers list by username
@@ -99,7 +99,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaUserList" />
         /// </returns>
-        IResult<InstaUserList> GetUserFollowers(string username, int maxPages = 0);
+        IResult<InstaUserList> GetUserFollowers(string username, int maxPages);
 
         /// <summary>
         ///     Get followers list for currently logged in user
@@ -108,7 +108,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaUserList" />
         /// </returns>
-        IResult<InstaUserList> GetCurentUserFollowers(int maxPages = 0);
+        IResult<InstaUserList> GetCurentUserFollowers(int maxPages);
 
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        IResult<InstaMediaList> GetUserTags(string username, int maxPages = 0);
+        IResult<InstaMediaList> GetUserTags(string username, int maxPages);
 
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
-        IResult<InstaActivityFeed> GetRecentActivity(int maxPages = 0);
+        IResult<InstaActivityFeed> GetRecentActivity(int maxPages);
 
         /// <summary>
         ///     Get activity of following
@@ -172,7 +172,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
-        IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages = 0);
+        IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages);
 
         #endregion
 
@@ -197,24 +197,24 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaFeed" />
         /// </returns>
-        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
+        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages);
 
         /// <summary>
         ///     Get user explore feed asynchronously
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns><see cref="InstaFeed" />></returns>
-        Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
+        Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages);
 
         /// <summary>
         ///     Get all user media by username asynchronously
         /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="userId">Username</param>
+        /// <param name="fromId">Previous getting last media id.</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserMediaAsync(string userId, string fromId, string mode);
 
         /// <summary>
         ///     Get media by its id asynchronously
@@ -230,17 +230,17 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="UserInfo" />
         /// </returns>
-        Task<IResult<InstaUser>> GetUserAsync(string username);
+        Task<IResult<UserInfo>> GetUserInfoByNameAsync(string userName);
 
         /// <summary>
-        ///     Get currently logged in user info asynchronously
+        /// Get user info by its user id asynchronously
         /// </summary>
-        /// <returns>
-        ///     <see cref="InstaUser" />
-        /// </returns>
-        Task<IResult<InstaUser>> GetCurrentUserAsync();
+        /// <param name="userId"></param>
+        /// <param name="needToUpdate"></param>
+        /// <returns></returns>
+        Task<IResult<UserInfo>> GetUserInfoByIdAsync(string userId);
 
         /// <summary>
         ///     Get tag feed by tag value asynchronously
@@ -250,7 +250,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaFeed" />
         /// </returns>
-        Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
+        Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages);
 
         /// <summary>
         ///     Get followers list by username asynchronously
@@ -260,7 +260,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaUserList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages);
 
         /// <summary>
         ///     Get requesters list for current user asynchronously
@@ -277,7 +277,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaUserList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
+        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages);
 
         /// <summary>
         ///     Get user tags by username asynchronously
@@ -288,7 +288,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages);
 
         /// <summary>
         ///     Get direct inbox threads for current user asynchronously
@@ -330,7 +330,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
-        Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0);
+        Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages);
 
         /// <summary>
         ///     Get activity of following asynchronously
@@ -339,7 +339,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
-        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0);
+        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages);
 
         /// <summary>
         ///     Like media (photo or video)
@@ -351,7 +351,7 @@ namespace InstaSharper.API
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
+        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, string fromId, string mode);
 
         /// <summary>
         ///     Get media comments
