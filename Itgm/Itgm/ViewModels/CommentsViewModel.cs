@@ -26,7 +26,7 @@ namespace Itgm.ViewModels
         private bool _isLongProcessStarted;
 
         private UserInfo _user;
-        private Timer _timer = new Timer(60000);
+        private Timer _timer;
 
         /// <summary>
         /// Создание вью модели.
@@ -34,11 +34,12 @@ namespace Itgm.ViewModels
         /// <param name="service">Сервис.</param>
         public CommentsViewModel(IService service) : base(service, null)
         {
-            _user = service.LoggedUser;
-            _timer.Elapsed += Timer_Elapsed;
-
             LoadMediasCommand = new ActionCommand(() => LoadMediasAsync(false));
             LoadCommentsCommand = new ActionCommand(LoadCommentsAsync);
+            UpdateMediasCommand = new ActionCommand(UpdateMedias);
+            UpdateCommentsCommand = new ActionCommand(UpdateComments);
+
+            InitializeViewModel();
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -65,7 +66,7 @@ namespace Itgm.ViewModels
 
                 _currentMedia?.StopTimer();
                 _currentMedia = value;
-                _currentMedia.UpdateComments();
+                _currentMedia?.UpdateComments();
                 OnPropertyChanged("CurrentMedia");
             }
         }
@@ -118,6 +119,16 @@ namespace Itgm.ViewModels
         /// Команда подгрузки комментов.
         /// </summary>
         public ICommand LoadCommentsCommand { get; private set; }
+
+        /// <summary>
+        /// Команда перезагрузки комментов.
+        /// </summary>
+        public ICommand UpdateMediasCommand { get; private set; }
+
+        /// <summary>
+        /// Команда перезагрузки комментов.
+        /// </summary>
+        public ICommand UpdateCommentsCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -127,7 +138,10 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            ClearViewModel();
+            _user = _service.LoggedUser;
+            _timer = new Timer(60000);
+            _timer.Elapsed += Timer_Elapsed;
+
             LoadMediasAsync(false);
         }
 
@@ -136,6 +150,16 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void ClearViewModel()
         {
+            CurrentMedia = null;
+
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Elapsed -= Timer_Elapsed;
+                _timer.Dispose();
+            }
+            _user = null;
+
             Medias.Clear();
         }
 
@@ -204,11 +228,26 @@ namespace Itgm.ViewModels
             IsLongProcessStarted = false;
         }
 
+        private void UpdateMedias()
+        {
+            ClearViewModel();
+            InitializeViewModel();
+        }
+
         private async void LoadCommentsAsync()
         {
             if (CurrentMedia != null)
             {
                 await CurrentMedia.LoadCommentsAsync(false);
+            }
+        }
+
+        private void UpdateComments()
+        {
+            if (CurrentMedia != null)
+            {
+                CurrentMedia.Comments.Clear();
+                CurrentMedia.UpdateComments();
             }
         }
         #endregion
