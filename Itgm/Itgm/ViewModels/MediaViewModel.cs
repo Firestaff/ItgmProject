@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
 using InstaSharper.Classes.Models;
 using Itgm.Interfaces;
 using Itgm.ViewModels;
@@ -19,13 +21,20 @@ namespace Itgm.ViewModels
         private bool _isLongProcessStarted;
         private DateTime _takenAt;
         private Image _image;
+        private Timer _timer = new Timer(30000);
 
         public MediaViewModel(InstaMedia media, IService service)
         {
             _model = media;
             _service = service;
+            _timer.Elapsed += Timer_Elapsed;
 
             InitializeViewModel();
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(UpdateComments);
         }
 
         #region Properties
@@ -52,6 +61,15 @@ namespace Itgm.ViewModels
                     return;
                 }
 
+                if (value == true)
+                {
+                    _timer.Stop();
+                }
+                else
+                {
+                    _timer.Start();
+                }
+
                 _isLongProcessStarted = value;
                 OnPropertyChanged(nameof(IsLongProcessStarted));
             }
@@ -76,7 +94,6 @@ namespace Itgm.ViewModels
         }
 
         public string Pk { get; private set; }
-
 
         public Image Image
         {
@@ -118,18 +135,24 @@ namespace Itgm.ViewModels
             Comments.Clear();
         }
 
-        public override async void UpdateViewModel()
+        public override void UpdateViewModel()
         {
-            if (Comments.Count == 0)
-            {
-                await LoadComments();
-            }
         }
 
-        public async Task LoadComments()
+        public async void UpdateComments()
+        {
+            if (IsLongProcessStarted)
+            {
+                return;
+            }
+
+            await LoadCommentsAsync(true);
+        }
+
+        public async Task LoadCommentsAsync(bool onlyNew)
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
-            if (_isLongProcessStarted)
+            if (IsLongProcessStarted)
             {
                 return;
             }
@@ -137,7 +160,6 @@ namespace Itgm.ViewModels
             IsLongProcessStarted = true;
 
             var fromId = Comments.LastOrDefault()?.Pk;
-
             if (fromId != null)
             {
                 while (true)
@@ -151,12 +173,20 @@ namespace Itgm.ViewModels
                 }
             }
 
-            var result = await _service.GetOldMediaCommentsAsync(Pk, fromId);
-            var comments = result.Reverse().ToList();
+            if (!onlyNew || Comments.Count == 0)
+            {
+                var result = await _service.GetOldMediaCommentsAsync(Pk, fromId);
+                var comments = result.Reverse().ToList();
 
-            comments.ForEach(c => Comments.Add(c));
+                comments.ForEach(c => Comments.Add(c));
+            }
 
             IsLongProcessStarted = false;
+        }
+
+        public void StopTimer()
+        {
+            _timer.Stop();
         }
 
         private string FormatByThousand(string prop, int value)

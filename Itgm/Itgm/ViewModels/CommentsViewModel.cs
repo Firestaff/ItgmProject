@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows.Input;
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
-using System.Threading.Tasks;
 using InstaSharper.Classes.Models;
+using System.Collections.Generic;
+using System.Timers;
+using System.Windows;
 
 namespace Itgm.ViewModels
 {
@@ -24,7 +25,8 @@ namespace Itgm.ViewModels
         /// </summary>
         private bool _isLongProcessStarted;
 
-        private UserInfo _user; 
+        private UserInfo _user;
+        private Timer _timer = new Timer(60000);
 
         /// <summary>
         /// Создание вью модели.
@@ -33,10 +35,15 @@ namespace Itgm.ViewModels
         public CommentsViewModel(IService service) : base(service, null)
         {
             _user = service.LoggedUser;
-            LoadMediasCommand = new ActionCommand(LoadMediasAsync);
+            _timer.Elapsed += Timer_Elapsed;
+
+            LoadMediasCommand = new ActionCommand(() => LoadMediasAsync(false));
             LoadCommentsCommand = new ActionCommand(LoadCommentsAsync);
-            //SetCurrentMediaCommand = new ActionCommand((m => SetCurrentMedia(m)));
-            //_service.RateLimitOver += CheckRateLimitIsOver;
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(UpdateViewModel);
         }
 
         #region Properties
@@ -56,8 +63,9 @@ namespace Itgm.ViewModels
                     return;
                 }
 
+                _currentMedia?.StopTimer();
                 _currentMedia = value;
-                _currentMedia.UpdateViewModel();
+                _currentMedia.UpdateComments();
                 OnPropertyChanged("CurrentMedia");
             }
         }
@@ -76,6 +84,15 @@ namespace Itgm.ViewModels
                 if (_isLongProcessStarted == value)
                 {
                     return;
+                }
+
+                if (value == true)
+                {
+                    _timer.Stop();
+                }
+                else
+                {
+                    _timer.Start();
                 }
 
                 _isLongProcessStarted = value;
@@ -111,7 +128,7 @@ namespace Itgm.ViewModels
         public override void InitializeViewModel()
         {
             ClearViewModel();
-            LoadMediasAsync();
+            LoadMediasAsync(false);
         }
 
         /// <summary>
@@ -127,13 +144,18 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void UpdateViewModel()
         {
-            InitializeViewModel();
+            if (IsLongProcessStarted)
+            {
+                return;
+            }
+
+            LoadMediasAsync(true);
         }
 
-        private async void LoadMediasAsync()
+        private async void LoadMediasAsync(bool onlyNew)
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
-            if (_isLongProcessStarted)
+            if (IsLongProcessStarted)
             {
                 return;
             }
@@ -142,22 +164,40 @@ namespace Itgm.ViewModels
 
             _user = await _service.UpdateCurrentUser();
 
-            if (Medias.Count == _user.MediaCount)
+            var fromId = Medias.LastOrDefault()?.Pk;
+            if (fromId != null)
             {
-                IsLongProcessStarted = false;
-                return;
+                int firstEntry = 0;
+                var topMedias = new List<InstaMedia>();
+
+                while (true)
+                {
+                    var firstId = topMedias.LastOrDefault()?.Pk; //"1375636587895080536";
+                    var newMedias = await _service.GetCurrentUserOldMediasAsync(firstId);
+                    topMedias.AddRange(newMedias);
+
+                    firstEntry = topMedias.FindIndex(e => e.Pk == Medias.First().Pk);
+                    if (firstEntry != -1 || newMedias.Count() == 0)
+                    {
+                        break;
+                    }
+                }
+
+                topMedias.RemoveRange(firstEntry, topMedias.Count - firstEntry);
+                topMedias.Reverse();
+                topMedias.ForEach(m => Medias.Insert(0, new MediaViewModel(m, _service)));
             }
 
-            var nextId = Medias.LastOrDefault()?.Pk;
-
-            var result = await _service.GetCurrentUserMediasAsync(nextId);
-            if (result != null && IsLongProcessStarted)
+            if (!onlyNew || Medias.Count == 0)
             {
+                var result = await _service.GetCurrentUserOldMediasAsync(fromId);
                 var medias = result.ToList();
-                //for (int i = 0; i < 29; i++)
-                {
-                    medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));
-                }
+
+                medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));
+            }
+
+            if (CurrentMedia == null)
+            {
                 CurrentMedia = Medias.FirstOrDefault();
             }
 
@@ -168,7 +208,7 @@ namespace Itgm.ViewModels
         {
             if (CurrentMedia != null)
             {
-                await CurrentMedia.LoadComments();
+                await CurrentMedia.LoadCommentsAsync(false);
             }
         }
         #endregion

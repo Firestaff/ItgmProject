@@ -40,13 +40,9 @@ namespace Itgm.Interfaces
         Task<IEnumerable<InstaComment>> GetNewMediaCommentsAsync(string mediaId, string fromId);
         Task<IEnumerable<InstaComment>> GetOldMediaCommentsAsync(string mediaId, string fromId);
 
-        /// <summary>
-        /// Запрос твитов для залогиненного пользователя.
-        /// </summary>
-        /// <param name="maxId">Максимальный идентификатор твита с которого необходимо провести запрос.</param>
-        /// <param name="count">Количество запрашиваемых твитов.</param>
-        /// <returns>Коллекция твитов.</returns>
-        Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId);
+
+        Task<IEnumerable<InstaMedia>> GetCurrentUserNewMediasAsync(string fromId);
+        Task<IEnumerable<InstaMedia>> GetCurrentUserOldMediasAsync(string fromId);
 
         Task<UserInfo> UpdateCurrentUser();
     }

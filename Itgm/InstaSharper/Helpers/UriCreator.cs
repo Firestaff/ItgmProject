@@ -65,13 +65,12 @@ namespace InstaSharper.Helpers
             return uriBuilder.Uri;
         }
 
-        public static Uri GetMediaListWithMaxIdUri(string userPk, string nextId)
+        public static Uri GetMediaListUri(string userPk)
         {
             Uri instaUri;
             if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.USEREFEED + userPk,
                     out instaUri)) throw new Exception("Cant create URI for media list");
-            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
-            return uriBuilder.Uri;
+            return instaUri;
         }
 
         public static Uri GetCurrentUserUri()

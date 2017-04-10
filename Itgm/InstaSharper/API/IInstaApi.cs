@@ -209,12 +209,12 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get all user media by username asynchronously
         /// </summary>
-        /// <param name="username">Username</param>
+        /// <param name="userId">Username</param>
         /// <param name="fromId">Previous getting last media id.</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, string fromId);
+        Task<IResult<InstaMediaList>> GetUserMediaAsync(string userId, string fromId, string mode);
 
         /// <summary>
         ///     Get media by its id asynchronously

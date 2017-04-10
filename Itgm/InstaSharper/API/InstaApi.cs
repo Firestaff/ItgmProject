@@ -21,6 +21,7 @@ namespace InstaSharper.API
 {
     public class InstaApi : IInstaApi
     {
+        #region Init
         private readonly AndroidDevice _deviceInfo;
         private readonly HttpClient _httpClient;
         private readonly HttpClientHandler _httpHandler;
@@ -40,7 +41,9 @@ namespace InstaSharper.API
             _requestMessage = requestMessage;
             _deviceInfo = deviceInfo;
         }
+        #endregion
 
+        #region User
         public async Task<IResult<bool>> LoginAsync()
         {
             ValidateCurrentUser();
@@ -78,8 +81,10 @@ namespace InstaSharper.API
                 {
                     var userId = Convert<UserInfo>(json).Id;
                     _userSession.RankToken = $"{userId}_{_requestMessage.phone_id}";
+
                     _userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
                     //_userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
+
                     IsUserAuthenticated = true;
 
                     return Result.Success(true);
@@ -134,26 +139,6 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, string fromId)
-        {
-            var user = GetCurrentUser().Value;
-            var mediaList = new InstaMediaList();
-
-            var instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Id, fromId);
-            var result = await GetUserMediaListWithMaxIdAsync(instaUri);
-            var mediaResponse = result.Value;
-
-            if (!result.Succeeded)
-            {
-                Result.Fail($"Not all pages were downloaded: {result.Info.Message}", mediaList);
-            }
-
-            var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
-            mediaList.AddRange(converter.Convert());
-
-            return Result.Success(mediaList);
-        }
-
         public async Task<IResult<UserInfo>> GetUserInfoByIdAsync(string userId)
         {
             try
@@ -186,6 +171,27 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, new UserInfo());
             }
+        }
+        #endregion
+
+        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string userId, string fromId, string mode)
+        {
+            var mediaList = new InstaMediaList();
+
+            var uri = UriCreator.GetMediaListUri(userId);
+            var instaUri = new UriBuilder(uri) { Query = $"{mode}_id={fromId}" }.Uri;
+            var result = await GetUserMediaListWithMaxIdAsync(instaUri);
+            var mediaResponse = result.Value;
+
+            if (!result.Succeeded)
+            {
+                Result.Fail($"Not all pages were downloaded: {result.Info.Message}", mediaList);
+            }
+
+            var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
+            mediaList.AddRange(converter.Convert());
+
+            return Result.Success(mediaList);
         }
 
         public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, string fromId, string mode)
@@ -238,7 +244,7 @@ namespace InstaSharper.API
 
         public IResult<InstaMediaList> GetUserMedia(string username, string fromId)
         {
-            return GetUserMediaAsync(username, fromId).Result;
+            return GetUserMediaAsync(username, fromId, "max").Result;
         }
 
         public IResult<UserInfo> GetUser(string username)

@@ -11,7 +11,7 @@
              MinHeight="500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition MinWidth="400" MaxWidth="480" Width="auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -151,7 +151,7 @@
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal"
-                               MinWidth="580"
+                               MinWidth="400" MaxWidth="480"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
                                VirtualizingPanel.ScrollUnit="Pixel" />
@@ -160,12 +160,25 @@
 
         </ListView>
         
-        <Button Grid.Column="0" Grid.Row="1"
-                Height="50" 
-                FontSize="22"
-                Content="загрузить еще постов"
-                Style="{StaticResource DefaultButtonStyle}"
-                Command="{Binding LoadMediasCommand}"/>
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Height="50" 
+                    FontSize="22"
+                    Content="Обновить"
+                    Style="{StaticResource DefaultButtonStyle}"
+                    Command="{Binding UpdateMediasCommand}"/>
+        
+            <Button Grid.Column="1"
+                    Height="50" 
+                    FontSize="22"
+                    Content="Загрузить еще постов"
+                    Style="{StaticResource DefaultButtonStyle}"
+                    Command="{Binding LoadMediasCommand}"/>
+        </Grid>
 
         <v:LongProcessControl Grid.Column="0" Grid.Row="1"
                               Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -188,38 +201,73 @@
                     <Setter Property="BorderThickness" Value="0" />
                     <Setter Property="Margin" Value="0,8,0,8" />
                 </Style>
+                
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="BorderThickness" Value="2" />
+                    <!--<Setter Property="BorderBrush" Value="{StaticResource TwitterMainThemeBrush}" />-->
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Border Name="Border"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Grid Name="MainItemGrid"
+                                          HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0"
+                                                   FontWeight="Medium"
+                                                   FontSize="13"
+                                                   TextAlignment="Left"
+                                                   TextWrapping="Wrap"
+                                                   Text="{Binding User.UserName, StringFormat={}{0}:}" />
+
+                                        <TextBox Grid.Column="1"
+                                                 TextWrapping="WrapWithOverflow"
+                                                 Text="{Binding Text}">
+                                        </TextBox>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="true" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="BorderBrush"
+                                    Value="{StaticResource TwitterMainThemeBrush}" />
+                        </MultiTrigger>
+                    </Style.Triggers>
+                </Style>
             </ListView.Resources>
-
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Name="MainItemGrid">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0"
-                                   Margin="5"
-                                   FontWeight="Bold"
-                                   TextAlignment="Left"
-                                   Text="{Binding User.UserName, StringFormat={}{0}:}" />
-
-                        <TextBox Grid.Column="1"
-                                 Margin="5"
-                                 TextWrapping="WrapWithOverflow"
-                                 Text="{Binding Text}">
-                        </TextBox>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
         </ListView>
         
-        <Button Grid.Column="1" Grid.Row="1" Margin="3,0,0,0"
-                Height="50" 
-                FontSize="22"
-                Content="загрузить еще комментов"
-                Style="{StaticResource DefaultButtonStyle}"
-                Command="{Binding LoadCommentsCommand}"/>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Margin="3,0,0,0"
+                    Height="50" 
+                    FontSize="22"
+                    Content="Обновить"
+                    Style="{StaticResource DefaultButtonStyle}"
+                    Command="{Binding UpdateCommentsCommand}"/>
+            
+            <Button Grid.Column="1" Margin="3,0,0,0"
+                    Height="50" 
+                    FontSize="22"
+                    Content="Загрузить еще комментов"
+                    Style="{StaticResource DefaultButtonStyle}"
+                    Command="{Binding LoadCommentsCommand}"/>
+        </Grid>
         
         <v:LongProcessControl Grid.Column="1" Grid.Row="1"
                               Visibility="{Binding CurrentMedia.IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"

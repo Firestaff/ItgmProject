@@ -171,13 +171,26 @@
         <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
         <Setter Property="Padding" Value="2,0,2,0"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="TextOptions.TextHintingMode" Value="Animated"/>
+        <Setter Property="TextOptions.TextHintingMode" Value="Auto"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
-        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        <Setter Property="TextOptions.TextRenderingMode" Value="Auto"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="IsReadOnly" Value="True"/>
+        
+        <!--<Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border x:Name="border" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}"
+                            ClipToBounds="False">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>-->
     </Style>
 
     <Style x:Key="PincodeTextBoxStyle" TargetType="{x:Type TextBox}">
