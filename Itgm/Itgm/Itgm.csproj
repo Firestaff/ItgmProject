@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\ImageAsyncConverter.cs" />
+    <Compile Include="ViewModels\RecentViewModel.cs" />
     <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="ViewModels\AuthenticationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
@@ -79,6 +80,9 @@
     </Compile>
     <Compile Include="Views\LongProcessControl.xaml.cs">
       <DependentUpon>LongProcessControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RecentActivityView.xaml.cs">
+      <DependentUpon>RecentActivityView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -124,6 +128,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\RecentActivityView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -154,9 +162,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Graph.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\InstaSharper\InstaSharper.csproj">
       <Project>{d0d35b2c-3a60-41c6-855b-3e7f42635217}</Project>
       <Name>InstaSharper</Name>
@@ -178,11 +183,11 @@
     <Resource Include="Images\background1.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\comment.png" />
-    <Resource Include="Images\like.png" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
+    <Resource Include="Images\comments.ico" />
+    <Resource Include="Images\lightning.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

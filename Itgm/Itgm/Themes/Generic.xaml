@@ -25,6 +25,9 @@
     <DataTemplate DataType="{x:Type vm:CommentsViewModel}">
         <v:CommentsView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:RecentViewModel}">
+        <v:RecentActivityView />
+    </DataTemplate>
 
     <!--Control templates-->
     <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">

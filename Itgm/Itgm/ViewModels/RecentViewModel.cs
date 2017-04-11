@@ -13,7 +13,7 @@ namespace Itgm.ViewModels
     /// <summary>
     /// Вью модель для отображения твитов.
     /// </summary>
-    public class CommentsViewModel : ResolvingViewModel
+    public class RecentViewModel : ResolvingViewModel
     {
         /// <summary>
         /// Показывает запущена ли длительная операция.
@@ -31,12 +31,10 @@ namespace Itgm.ViewModels
         /// Создание вью модели.
         /// </summary>
         /// <param name="service">Сервис.</param>
-        public CommentsViewModel(IService service) : base(service, null)
+        public RecentViewModel(IService service) : base(service, null)
         {
             LoadMediasCommand = new ActionCommand(() => LoadMediasAsync(false));
-            LoadCommentsCommand = new ActionCommand(LoadCommentsAsync);
             UpdateMediasCommand = new ActionCommand(UpdateMedias);
-            UpdateCommentsCommand = new ActionCommand(UpdateComments);
 
             InitializeViewModel();
         }
@@ -103,7 +101,7 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Коллекция твитов.
         /// </summary>
-        public ObservableCollection<MediaViewModel> Medias { get; private set; } 
+        public ObservableCollection<MediaViewModel> Activity { get; private set; } 
             = new ObservableCollection<MediaViewModel>();
 
         #endregion
@@ -115,19 +113,9 @@ namespace Itgm.ViewModels
         public ICommand LoadMediasCommand { get; private set; }
 
         /// <summary>
-        /// Команда подгрузки комментов.
-        /// </summary>
-        public ICommand LoadCommentsCommand { get; private set; }
-
-        /// <summary>
         /// Команда перезагрузки комментов.
         /// </summary>
         public ICommand UpdateMediasCommand { get; private set; }
-
-        /// <summary>
-        /// Команда перезагрузки комментов.
-        /// </summary>
-        public ICommand UpdateCommentsCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -157,7 +145,7 @@ namespace Itgm.ViewModels
                 _timer.Dispose();
             }
 
-            Medias.Clear();
+            Activity.Clear();
         }
 
         /// <summary>
@@ -183,9 +171,7 @@ namespace Itgm.ViewModels
 
             IsLongProcessStarted = true;
 
-            //await _service.UpdateCurrentUser();
-
-            var fromId = Medias.LastOrDefault()?.Pk;
+            var fromId = Activity.LastOrDefault()?.Pk;
             if (fromId != null)
             {
                 int firstEntry = 0;
@@ -197,7 +183,7 @@ namespace Itgm.ViewModels
                     var newMedias = await _service.GetCurrentUserOldMediasAsync(firstId);
                     topMedias.AddRange(newMedias);
 
-                    firstEntry = topMedias.FindIndex(e => e.Pk == Medias.First().Pk);
+                    firstEntry = topMedias.FindIndex(e => e.Pk == Activity.First().Pk);
                     if (firstEntry != -1 || newMedias.Count() == 0)
                     {
                         break;
@@ -206,20 +192,20 @@ namespace Itgm.ViewModels
 
                 topMedias.RemoveRange(firstEntry, topMedias.Count - firstEntry);
                 topMedias.Reverse();
-                topMedias.ForEach(m => Medias.Insert(0, new MediaViewModel(m, _service)));
+                topMedias.ForEach(m => Activity.Insert(0, new MediaViewModel(m, _service)));
             }
 
-            if (!onlyNew || Medias.Count == 0)
+            if (!onlyNew || Activity.Count == 0)
             {
                 var result = await _service.GetCurrentUserOldMediasAsync(fromId);
                 var medias = result.ToList();
 
-                medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));
+                medias.ForEach(m => Activity.Add(new MediaViewModel(m, _service)));
             }
 
             if (CurrentMedia == null)
             {
-                CurrentMedia = Medias.FirstOrDefault();
+                CurrentMedia = Activity.FirstOrDefault();
             }
 
             IsLongProcessStarted = false;
@@ -229,23 +215,6 @@ namespace Itgm.ViewModels
         {
             ClearViewModel();
             InitializeViewModel();
-        }
-
-        private async void LoadCommentsAsync()
-        {
-            if (CurrentMedia != null)
-            {
-                await CurrentMedia.LoadCommentsAsync(false);
-            }
-        }
-
-        private void UpdateComments()
-        {
-            if (CurrentMedia != null)
-            {
-                CurrentMedia.Comments.Clear();
-                CurrentMedia.UpdateComments();
-            }
         }
         #endregion
     }
