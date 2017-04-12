@@ -15,7 +15,7 @@ namespace InstaSharper.Converters
             var story = new InstaStory
             {
                 CanReply = SourceObject.CanReply,
-                ExpiringAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.ExpiringAt),
+                ExpiringAt = DateTimeHelper.FromUnixSeconds(SourceObject.ExpiringAt),
                 Id = SourceObject.Id,
                 LatestReelMedia = SourceObject.LatestReelMedia,
                 RankedPosition = SourceObject.RankedPosition,

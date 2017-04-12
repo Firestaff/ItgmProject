@@ -18,8 +18,8 @@ namespace InstaSharper.Converters
             var caption = new InstaCaption
             {
                 Pk = SourceObject.Pk,
-                CreatedAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.CreatedAtUnixLike),
-                CreatedAtUtc = DateTimeHelper.UnixTimestampToDateTime(SourceObject.CreatedAtUtcUnixLike),
+                CreatedAt = DateTimeHelper.FromUnixSeconds(SourceObject.CreatedAtUnixLike),
+                CreatedAtUtc = DateTimeHelper.FromUnixSeconds(SourceObject.CreatedAtUtcUnixLike),
                 MediaId = SourceObject.MediaId,
                 Text = SourceObject.Text,
                 User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert(),

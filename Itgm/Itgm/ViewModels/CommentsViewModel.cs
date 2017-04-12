@@ -194,7 +194,7 @@ namespace Itgm.ViewModels
                 while (true)
                 {
                     var firstId = topMedias.LastOrDefault()?.Pk; //"1375636587895080536";
-                    var newMedias = await _service.GetCurrentUserOldMediasAsync(firstId);
+                    var newMedias = await _service.GetCurrentUserMediasAsync(firstId);
                     topMedias.AddRange(newMedias);
 
                     firstEntry = topMedias.FindIndex(e => e.Pk == Medias.First().Pk);
@@ -211,7 +211,7 @@ namespace Itgm.ViewModels
 
             if (!onlyNew || Medias.Count == 0)
             {
-                var result = await _service.GetCurrentUserOldMediasAsync(fromId);
+                var result = await _service.GetCurrentUserMediasAsync(fromId);
                 var medias = result.ToList();
 
                 medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));

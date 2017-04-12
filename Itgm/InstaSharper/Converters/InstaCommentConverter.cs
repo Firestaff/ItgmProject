@@ -15,9 +15,9 @@ namespace InstaSharper.Converters
             var comment = new InstaComment
             {
                 BitFlags = SourceObject.BitFlags,
-                ContentType = (InstaContentType) Enum.Parse(typeof(InstaContentType), SourceObject.ContentType, true),
-                CreatedAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.CreatedAt),
-                CreatedAtUtc = DateTimeHelper.UnixTimestampToDateTime(SourceObject.CreatedAtUtc),
+                ContentType = (InstaContentType)Enum.Parse(typeof(InstaContentType), SourceObject.ContentType, true),
+                CreatedAt = DateTimeHelper.FromUnixSeconds(SourceObject.CreatedAt),
+                CreatedAtUtc = DateTimeHelper.FromUnixSeconds(SourceObject.CreatedAtUtc),
                 LikesCount = SourceObject.LikesCount,
                 Pk = SourceObject.Pk,
                 Status = SourceObject.Status,

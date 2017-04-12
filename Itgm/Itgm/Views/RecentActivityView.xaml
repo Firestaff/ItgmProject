@@ -15,7 +15,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ListView ItemsSource="{Binding Medias, Mode=OneTime}"
+        <ListView ItemsSource="{Binding Activity, Mode=OneTime}"
                   Name="Medias"
                   SelectedItem="{Binding CurrentMedia}"
                   DisplayMemberPath="{Binding Pk}"

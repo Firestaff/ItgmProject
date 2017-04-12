@@ -33,8 +33,8 @@ namespace Itgm.ViewModels
         /// <param name="service">Сервис.</param>
         public RecentViewModel(IService service) : base(service, null)
         {
-            LoadMediasCommand = new ActionCommand(() => LoadMediasAsync(false));
-            UpdateMediasCommand = new ActionCommand(UpdateMedias);
+            LoadMediasCommand = new ActionCommand(() => LoadActivityAsync(false));
+            UpdateMediasCommand = new ActionCommand(UpdateActivity);
 
             InitializeViewModel();
         }
@@ -128,7 +128,7 @@ namespace Itgm.ViewModels
             _timer = new Timer(60000);
             _timer.Elapsed += Timer_Elapsed;
 
-            LoadMediasAsync(false);
+            LoadActivityAsync(false);
         }
 
         /// <summary>
@@ -158,10 +158,10 @@ namespace Itgm.ViewModels
                 return;
             }
 
-            LoadMediasAsync(true);
+            LoadActivityAsync(true);
         }
 
-        private async void LoadMediasAsync(bool onlyNew)
+        private async void LoadActivityAsync(bool onlyNew)
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
             if (IsLongProcessStarted)
@@ -171,47 +171,19 @@ namespace Itgm.ViewModels
 
             IsLongProcessStarted = true;
 
-            var fromId = Activity.LastOrDefault()?.Pk;
-            if (fromId != null)
-            {
-                int firstEntry = 0;
-                var topMedias = new List<InstaMedia>();
+            var result = await _service.GetRecentActivityAsync(onlyNew);
+            result.Reverse();
+            result.ForEach(a => Activity.Insert(0, new MediaViewModel(null, _service)));
 
-                while (true)
-                {
-                    var firstId = topMedias.LastOrDefault()?.Pk; //"1375636587895080536";
-                    var newMedias = await _service.GetCurrentUserOldMediasAsync(firstId);
-                    topMedias.AddRange(newMedias);
-
-                    firstEntry = topMedias.FindIndex(e => e.Pk == Activity.First().Pk);
-                    if (firstEntry != -1 || newMedias.Count() == 0)
-                    {
-                        break;
-                    }
-                }
-
-                topMedias.RemoveRange(firstEntry, topMedias.Count - firstEntry);
-                topMedias.Reverse();
-                topMedias.ForEach(m => Activity.Insert(0, new MediaViewModel(m, _service)));
-            }
-
-            if (!onlyNew || Activity.Count == 0)
-            {
-                var result = await _service.GetCurrentUserOldMediasAsync(fromId);
-                var medias = result.ToList();
-
-                medias.ForEach(m => Activity.Add(new MediaViewModel(m, _service)));
-            }
-
-            if (CurrentMedia == null)
-            {
-                CurrentMedia = Activity.FirstOrDefault();
-            }
+            //if (CurrentMedia == null)
+            //{
+            //    CurrentMedia = Activity.FirstOrDefault();
+            //}
 
             IsLongProcessStarted = false;
         }
 
-        private void UpdateMedias()
+        private void UpdateActivity()
         {
             ClearViewModel();
             InitializeViewModel();

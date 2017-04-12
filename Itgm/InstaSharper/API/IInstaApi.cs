@@ -161,18 +161,18 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaActivityFeed" />
+        ///     <see cref="RecentActivities" />
         /// </returns>
-        IResult<InstaActivityFeed> GetRecentActivity(int maxPages);
+        IResult<RecentActivities> GetRecentActivity(bool onlyNew);
 
         /// <summary>
         ///     Get activity of following
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaActivityFeed" />
+        ///     <see cref="RecentActivities" />
         /// </returns>
-        IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages);
+        IResult<RecentActivities> GetFollowingRecentActivity(int maxPages);
 
         #endregion
 
@@ -328,18 +328,18 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaActivityFeed" />
+        ///     <see cref="RecentActivities" />
         /// </returns>
-        Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages);
+        Task<IResult<RecentActivities>> GetRecentActivityAsync(bool onlyNew);
 
         /// <summary>
         ///     Get activity of following asynchronously
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaActivityFeed" />
+        ///     <see cref="RecentActivities" />
         /// </returns>
-        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages);
+        Task<IResult<RecentActivities>> GetFollowingRecentActivityAsync(int maxPages);
 
         /// <summary>
         ///     Like media (photo or video)
