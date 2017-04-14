@@ -24,6 +24,11 @@
         <GradientStop Color="#FFFFFFFF" Offset="0.2"/>
         <GradientStop Color="#00FFFFFF" Offset="0.2"/>
     </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="CuttedBlackFillBrush" StartPoint="0,1" EndPoint="0,0">
+        <GradientStop Color="#09000000" Offset="1"/>
+        <GradientStop Color="#00000000" Offset="0.2"/>
+    </LinearGradientBrush>
 
     <ImageBrush x:Key="ItgmBackgroundBrush" ImageSource="..\\Images/background.jpg" />
 </ResourceDictionary>

@@ -16,136 +16,83 @@
         </Grid.RowDefinitions>
 
         <ListView ItemsSource="{Binding Activity, Mode=OneTime}"
-                  Name="Medias"
-                  SelectedItem="{Binding CurrentMedia}"
-                  DisplayMemberPath="{Binding Pk}"
-                  Padding="5"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                   VirtualizingPanel.ScrollUnit="Pixel"
-                  BorderThickness="0"
-                  Background="{StaticResource OpaqueGrayBrush}">
+                  BorderThickness="0,0,0,1"
+                  Background="White">
             <ListView.Resources>
                 <Style TargetType="{x:Type ScrollBar}">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="Black" />
                     <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Margin" Value="0,8,0,8" />
                 </Style>
 
                 <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="BorderThickness" Value="5" />
-                    <Setter Property="BorderBrush" Value="Transparent" />
-                    <Setter Property="Margin" Value="3" />
+                    <Setter Property="BorderThickness" Value="3" />
+                    <Setter Property="BorderBrush" Value="{StaticResource TwitterTweetBackgroundBrush}" />
+                    <Setter Property="Margin" Value="0" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <Grid Name="MainItemGrid"
-                                      Width="140" Height="140"
-                                      Background="{StaticResource TwitterTweetBackgroundBrush}"
-                                      HorizontalAlignment="Stretch">
-
-                                    <Grid Name="MainContentImageGrid"
-                                          DataContext="{Binding Image, Mode=OneTime}">
-                                        <Image Source="{Binding Url, IsAsync=True, Converter={StaticResource ImageAsyncConverter}}"
-                                               Stretch="UniformToFill"
-                                               StretchDirection="Both"
-                                               Name="ContentImage">
-                                        </Image>
-                                    </Grid>
-
-                                    <Grid Name="LikesGrid"
-                                          Height="25"
-                                          VerticalAlignment="Bottom"
-                                          HorizontalAlignment="Stretch"
-                                          Background="{StaticResource TwitterTweetBackgroundBrush}">
-
+                                <Border Name="Border"
+                                        Padding="5"
+                                        Background="{TemplateBinding Background}"
+                                        HorizontalAlignment="Stretch"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Grid Name="MainItemGrid" Height="45"
+                                          Background="{StaticResource TwitterTweetBackgroundBrush}"
+                                          HorizontalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.6*" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="0.4*" />
-                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="45"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="45"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="Comments"
-                                                   Grid.Row="0"
-                                                   Grid.Column="0"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"
-                                                   Margin="3,0,3,0"
-                                                   FontWeight="Medium"
-                                                   Foreground="{StaticResource TwitterAdditionalTextBrush}"
-                                                   FontSize="12" />
+                                        <Image Grid.Column="0"
+                                               Source="{Binding ProfileImage, IsAsync=True, Converter={StaticResource ImageAsyncConverter}}"
+                                               Stretch="UniformToFill"
+                                               StretchDirection="Both">
+                                        </Image>
+                                    
+                                        <TextBox Grid.Column="1"
+                                                 Foreground="{StaticResource TwitterAdditionalTextBrush}"
+                                                 TextWrapping="WrapWithOverflow"
+                                                 Text="{Binding Text, Mode=OneWay}"/>
 
-                                        <TextBlock Text="Likes"
-                                                   Grid.Row="1"
-                                                   Grid.Column="2"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"
-                                                   Margin="3,0,3,0"
-                                                   FontWeight="Medium"
-                                                   Foreground="{StaticResource TwitterAdditionalTextBrush}"
-                                                   FontSize="12" />
-
-                                        <TextBlock Text="{Binding CommentsCount, IsAsync=True}"
-                                                   Grid.Row="0"
-                                                   Grid.Column="1"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Left"
-                                                   FontSize="12"
-                                                   Margin="0,0,3,0"
-                                                   FontWeight="Medium"
-                                                   Foreground="{StaticResource TwitterAdditionalTextBrush}" />
-
-                                        <TextBlock Text="{Binding LikesCount, IsAsync=True}"
-                                                   Grid.Row="1"
-                                                   Grid.Column="3"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Left"
-                                                   FontSize="12"
-                                                   Margin="0,0,7,0"
-                                                   FontWeight="Medium"
-                                                   Foreground="{StaticResource TwitterAdditionalTextBrush}" />
+                                        <Image Grid.Column="2"
+                                               Source="{Binding MediaImage, IsAsync=True, Converter={StaticResource ImageAsyncConverter}}"
+                                               Stretch="UniformToFill"
+                                               StretchDirection="Both">
+                                        </Image>
+                                    
+                                        <Border Grid.ColumnSpan="3" 
+                                                BorderThickness="0,0,0,0"
+                                                BorderBrush="Silver"/>
                                     </Grid>
-
-                                    <Border Height="25"
-                                            VerticalAlignment="Bottom"
-                                            Background="Transparent"
-                                            BorderThickness="0,1,0,0"
-                                            BorderBrush="{StaticResource OpaqueGrayBrush}" />
-
-                                    <Border BorderThickness="{TemplateBinding BorderThickness}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            Margin="-1">
-                                        <Border.Effect>
-                                            <BlurEffect Radius="4"
-                                                        RenderingBias="Quality" />
-                                        </Border.Effect>
-                                    </Border>
-                                </Grid>
+                                </Border>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
 
                     <Style.Triggers>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected"
-                                           Value="true" />
-                            </MultiTrigger.Conditions>
+                        <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="BorderBrush"
                                     Value="{StaticResource TwitterMainThemeBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                     </Style.Triggers>
                 </Style>
             </ListView.Resources>
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch"
-                               VirtualizingPanel.ScrollUnit="Pixel" />
+                    <StackPanel Orientation="Vertical"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                VirtualizingPanel.ScrollUnit="Pixel" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
 
@@ -157,23 +104,23 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Height="50" 
-                    FontSize="22"
+                    Height="40" 
+                    FontSize="16"
                     Content="Обновить"
                     Style="{StaticResource DefaultButtonStyle}"
-                    Command="{Binding UpdateMediasCommand}"/>
+                    Command="{Binding UpdateActivitiesCommand}"/>
         
             <Button Grid.Column="1"
-                    Height="50" 
-                    FontSize="22"
+                    Height="40" 
+                    FontSize="16"
                     Content="Загрузить еще"
                     Style="{StaticResource DefaultButtonStyle}"
-                    Command="{Binding LoadMediasCommand}"/>
+                    Command="{Binding LoadActivitiesCommand}"/>
         </Grid>
 
         <v:LongProcessControl Grid.Column="0" Grid.Row="1"
                               Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                               IsColorInverted="true"
-                              Margin="2,2,2,2" Height="46"/>
+                              Margin="2,2,2,2" Height="36"/>
     </Grid>
 </UserControl>

@@ -6,9 +6,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.Models
 {
-    public class RecentActivities : List<RecentActivity>
-    {
-    }
+    public class RecentActivities : List<RecentActivity>{}
 
     public class RecentActivity
     {

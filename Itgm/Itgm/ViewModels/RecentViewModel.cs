@@ -1,12 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
-using Microsoft.Expression.Interactivity.Core;
-using Itgm.Interfaces;
-using InstaSharper.Classes.Models;
-using System.Collections.Generic;
 using System.Timers;
 using System.Windows;
+using Microsoft.Expression.Interactivity.Core;
+using Itgm.Interfaces;
 
 namespace Itgm.ViewModels
 {
@@ -15,11 +12,6 @@ namespace Itgm.ViewModels
     /// </summary>
     public class RecentViewModel : ResolvingViewModel
     {
-        /// <summary>
-        /// Показывает запущена ли длительная операция.
-        /// </summary>
-        private MediaViewModel _currentMedia;
-
         /// <summary>
         /// Показывает запущена ли длительная операция.
         /// </summary>
@@ -33,41 +25,18 @@ namespace Itgm.ViewModels
         /// <param name="service">Сервис.</param>
         public RecentViewModel(IService service) : base(service, null)
         {
-            LoadMediasCommand = new ActionCommand(() => LoadActivityAsync(false));
-            UpdateMediasCommand = new ActionCommand(UpdateActivity);
+            LoadActivitiesCommand = new ActionCommand(() => LoadActivityAsync(true));
+            UpdateActivitiesCommand = new ActionCommand(UpdateViewModel);
 
             InitializeViewModel();
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(UpdateViewModel);
+            Application.Current.Dispatcher.Invoke(() => LoadActivityAsync(true));
         }
 
         #region Properties
-        /// <summary>
-        /// Устанавливает текущий пост.
-        /// </summary>
-        public MediaViewModel CurrentMedia
-        {
-            get
-            {
-                return _currentMedia;
-            }
-            set
-            {
-                if (_currentMedia == value)
-                {
-                    return;
-                }
-
-                _currentMedia?.StopTimer();
-                _currentMedia = value;
-                _currentMedia?.UpdateComments();
-                OnPropertyChanged("CurrentMedia");
-            }
-        }
-
         /// <summary>
         /// Показывает запущена ли длительная операция.
         /// </summary>
@@ -101,8 +70,8 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Коллекция твитов.
         /// </summary>
-        public ObservableCollection<MediaViewModel> Activity { get; private set; } 
-            = new ObservableCollection<MediaViewModel>();
+        public ObservableCollection<ActivityViewModel> Activity { get; private set; } 
+            = new ObservableCollection<ActivityViewModel>();
 
         #endregion
 
@@ -110,12 +79,12 @@ namespace Itgm.ViewModels
         /// <summary>
         /// Команда подгрузки постов.
         /// </summary>
-        public ICommand LoadMediasCommand { get; private set; }
+        public ICommand LoadActivitiesCommand { get; private set; }
 
         /// <summary>
         /// Команда перезагрузки комментов.
         /// </summary>
-        public ICommand UpdateMediasCommand { get; private set; }
+        public ICommand UpdateActivitiesCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -136,8 +105,6 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void ClearViewModel()
         {
-            CurrentMedia = null;
-
             if (_timer != null)
             {
                 _timer.Stop();
@@ -158,7 +125,8 @@ namespace Itgm.ViewModels
                 return;
             }
 
-            LoadActivityAsync(true);
+            ClearViewModel();
+            InitializeViewModel();
         }
 
         private async void LoadActivityAsync(bool onlyNew)
@@ -173,20 +141,15 @@ namespace Itgm.ViewModels
 
             var result = await _service.GetRecentActivityAsync(onlyNew);
             result.Reverse();
-            result.ForEach(a => Activity.Insert(0, new MediaViewModel(null, _service)));
-
-            //if (CurrentMedia == null)
-            //{
-            //    CurrentMedia = Activity.FirstOrDefault();
-            //}
+            result.ForEach(a => 
+            {
+                if (a.CommentId != null && a.Type == 1)
+                {
+                    Activity.Insert(0, new ActivityViewModel(a));
+                }
+            });
 
             IsLongProcessStarted = false;
-        }
-
-        private void UpdateActivity()
-        {
-            ClearViewModel();
-            InitializeViewModel();
         }
         #endregion
     }

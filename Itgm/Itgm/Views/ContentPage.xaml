@@ -12,6 +12,7 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:ContentViewModel}"
              
+             Background="White"
              MinHeight="600"
              MinWidth="1000">
     <Grid>
@@ -26,9 +27,9 @@
         <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="95"/>
+                <ColumnDefinition Width="95"/>
+                <ColumnDefinition Width="95"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.Resources>
@@ -79,35 +80,40 @@
                         VerticalAlignment="Center"
                         Text="{Binding User.FollowingCount, StringFormat={}{0:#,#0}&#x0a;подписок}"/>
             
+            <Border Grid.ColumnSpan="5" Opacity="0.5" BorderBrush="{StaticResource TwitterAdditionalTextBrush}" BorderThickness="0,0,0,1"/>
+            
         </Grid>
         <ListView Grid.Row="1" Grid.Column="0" 
-                  Margin="0,5,0,5"
-                  Padding="-1"
-                  Background="Transparent"
+                  Padding="0,5,0,0"
+                  Background="{StaticResource CuttedBlackFillBrush}"
                   BorderThickness="0"
-                  SelectedIndex="{Binding ContentIndex, FallbackValue=1}">
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectedIndex="{Binding ContentIndex, FallbackValue=0}">
             <ListView.Resources>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="BorderThickness" Value="0" />
                     <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Background" Value="Transparent" />
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="Padding" Value="5" />
+                    <Setter Property="Opacity" Value="0.6" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ListViewItem}">
                                 <Grid Height="40" Background="{TemplateBinding Background}">
                                     <ContentPresenter Content="{TemplateBinding Content}" 
-                                          Margin="{TemplateBinding Padding}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                                      Opacity="{TemplateBinding Opacity}"
+                                                      Margin="{TemplateBinding Padding}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
                                     </ContentPresenter>
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="true">
-                                        <Setter Property="Background" Value="{StaticResource TwitterMainThemeBrush}"/>
+                                        <Setter Property="Opacity" Value="0.8"/>
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="true">
-                                        <Setter Property="Background" Value="DimGray"/>
+                                        <Setter Property="Opacity" Value="1"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
 
@@ -118,10 +124,10 @@
             </ListView.Resources>
             
             <ListViewItem>
-                <Image Source="..\\Images/comments.ico"/>
+                <Image Source="..\\Images/lightning.ico"/>
             </ListViewItem>
             <ListViewItem>
-                <Image Source="..\\Images/lightning.ico"/>
+                <Image Source="..\\Images/comments.ico"/>
             </ListViewItem>
         </ListView>
         <ContentControl Grid.Row="1" Grid.Column="1" Margin="0,5,5,5" Content="{Binding CurrentContent, Mode=OneWay}"/>

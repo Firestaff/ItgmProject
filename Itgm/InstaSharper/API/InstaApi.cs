@@ -82,8 +82,8 @@ namespace InstaSharper.API
                     var userId = Convert<UserInfo>(json).Id;
                     _userSession.RankToken = $"{userId}_{_requestMessage.phone_id}";
 
-                    _userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
-                    //_userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
+                    //_userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
+                    _userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
 
                     IsUserAuthenticated = true;
 
@@ -112,8 +112,10 @@ namespace InstaSharper.API
 
         public async Task<IResult<bool>> LogoutAsync()
         {
-            ValidateCurrentUser();
-            ValidateLoggedIn();
+            if (_userSession == null || _userSession.RankToken == null)
+            {
+                return Result.Success(true);
+            }
 
             try
             {
@@ -231,7 +233,7 @@ namespace InstaSharper.API
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                return Result.Fail(GetBadStatusFromJsonString(json).Message, (RecentActivities)null);
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, new RecentActivities());
             }
 
             var jObject = JObject.Parse(json);

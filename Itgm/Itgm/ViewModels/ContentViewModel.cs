@@ -14,28 +14,12 @@ namespace Itgm.ViewModels
     public class ContentViewModel : ResolvingViewModel
     {
         #region Fields
-
-        /// <summary>
-        /// Активное представление.
-        /// </summary>
         private BaseViewModel _currentContent;
-
-        private ContentType _contentIndex;
-
+        private ContentType _contentIndex = ContentType.None;
         private Dictionary<ContentType, BaseViewModel> _contents = new Dictionary<ContentType, BaseViewModel>();
-
-        /// <summary>
-        /// Текущий пользователь.
-        /// </summary>
         public UserInfo _user;
-
         #endregion
 
-        /// <summary>
-        /// Создание вью модели.
-        /// </summary>
-        /// <param name="service">Сервис.</param>
-        /// <param name="resolveView">Метод отрисовки нового представления.</param>
         public ContentViewModel(IService service, Action<ViewTypes> resolveView) : base(service, resolveView)
         {
             ReloginCommand = new ActionCommand(OnRelogin);
@@ -95,6 +79,11 @@ namespace Itgm.ViewModels
 
                         case ContentType.RecentActivity:
                             _contents[_contentIndex] = new RecentViewModel(_service);
+                            CurrentContent = _contents[_contentIndex];
+                            break;
+
+                        case ContentType.None:
+                            _contents[_contentIndex] = null;
                             CurrentContent = _contents[_contentIndex];
                             break;
                     }
@@ -199,8 +188,10 @@ namespace Itgm.ViewModels
 
         public enum ContentType
         {
-            MediaComments = 0,
-            RecentActivity = 1
+            RecentActivity = 0,
+            MediaComments = 1,
+            Direct = 2,
+            None = 3,
         }
     }
 }

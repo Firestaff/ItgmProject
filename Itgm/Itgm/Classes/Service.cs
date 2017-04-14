@@ -33,6 +33,7 @@ namespace Itgm.Classes
         /// </summary>
         public UserInfo LoggedUser { get; private set; }
 
+
         #region Public methods
         #region Media
         public async Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId)
@@ -95,6 +96,11 @@ namespace Itgm.Classes
 
         public async Task LogoutAsync()
         {
+            if (_app == null)
+            {
+                return;
+            }
+
             await _app.LogoutAsync();
         }
         #endregion

@@ -12,6 +12,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="400" MaxWidth="480" Width="auto"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -29,21 +30,20 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   VirtualizingPanel.ScrollUnit="Pixel"
                   BorderThickness="0"
-                  Background="{StaticResource OpaqueGrayBrush}"
                   Loaded="Medias_Loaded"
                   Unloaded="Medias_Unloaded">
             <ListView.Resources>
                 <Style TargetType="{x:Type ScrollBar}">
                     <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Margin" Value="0,8,0,8" />
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="Black" />
+                    <Setter Property="Margin" Value="0,8,0,0" />
                 </Style>
 
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="BorderThickness" Value="5" />
-                    <!--<Setter Property="BorderBrush" Value="{StaticResource TwitterMainThemeBrush}" />-->
                     <Setter Property="BorderBrush" Value="Transparent" />
-                    <Setter Property="Margin" Value="3" />
+                    <Setter Property="Margin" Value="5" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Template">
                         <Setter.Value>
@@ -166,15 +166,15 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Height="50" 
-                    FontSize="22"
+                    Height="40" 
+                    FontSize="16"
                     Content="Обновить"
                     Style="{StaticResource DefaultButtonStyle}"
                     Command="{Binding UpdateMediasCommand}"/>
         
             <Button Grid.Column="1"
-                    Height="50" 
-                    FontSize="22"
+                    Height="40" 
+                    FontSize="16"
                     Content="Загрузить еще постов"
                     Style="{StaticResource DefaultButtonStyle}"
                     Command="{Binding LoadMediasCommand}"/>
@@ -183,13 +183,14 @@
         <v:LongProcessControl Grid.Column="0" Grid.Row="1"
                               Visibility="{Binding IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                               IsColorInverted="true"
-                              Margin="2,2,2,2" Height="46"/>
+                              Margin="2,2,2,2" Height="36"/>
         
-        <ListView Grid.Column="1"
+        <ListView Grid.Column="2"
                   ItemsSource="{Binding CurrentMedia.Comments}"
                   Foreground="White"
                   Margin="3,0,0,0"
-                  Background="{StaticResource OpaqueGrayBrush}"
+                  Padding="5, 2, 0,0"
+                  Background="#BB000000"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   VirtualizingPanel.ScrollUnit="Pixel"
@@ -197,9 +198,10 @@
             
             <ListView.Resources>
                 <Style TargetType="{x:Type ScrollBar}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="White" />
                     <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Margin" Value="0,8,0,8" />
+                    <Setter Property="Margin" Value="0,0,0,0" />
                 </Style>
                 
                 <Style TargetType="{x:Type ListViewItem}">
@@ -229,49 +231,48 @@
 
                                         <TextBox Grid.Column="1"
                                                  TextWrapping="WrapWithOverflow"
-                                                 Text="{Binding Text}">
-                                        </TextBox>
+                                                 Text="{Binding Text}"/>
+
                                     </Grid>
                                 </Border>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="true" />
-                            </MultiTrigger.Conditions>
+                        <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="BorderBrush"
                                     Value="{StaticResource TwitterMainThemeBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                     </Style.Triggers>
                 </Style>
             </ListView.Resources>
         </ListView>
         
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Column="2" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Margin="3,0,0,0"
-                    Height="50" 
-                    FontSize="22"
+                    Height="40" 
+                    FontSize="16"
                     Content="Обновить"
                     Style="{StaticResource DefaultButtonStyle}"
                     Command="{Binding UpdateCommentsCommand}"/>
             
             <Button Grid.Column="1" Margin="3,0,0,0"
-                    Height="50" 
-                    FontSize="22"
+                    Height="40" 
+                    FontSize="16"
                     Content="Загрузить еще комментов"
                     Style="{StaticResource DefaultButtonStyle}"
                     Command="{Binding LoadCommentsCommand}"/>
         </Grid>
         
-        <v:LongProcessControl Grid.Column="1" Grid.Row="1"
+        <v:LongProcessControl Grid.Column="2" Grid.Row="1"
                               Visibility="{Binding CurrentMedia.IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                               IsColorInverted="true"
-                              Margin="5,2,2,2" Height="46"/>
+                              Margin="2,2,2,2" Height="36"/>
+        
+        <Grid Grid.Column="1" Grid.RowSpan="2" Background="White" Opacity="0.5"/>
     </Grid>
 </UserControl>

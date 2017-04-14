@@ -1,15 +1,10 @@
-﻿using InstaSharper.API.Builder;
-using InstaSharper.Classes;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Windows;
+
 using Itgm.Classes;
 using Itgm.Interfaces;
 using Itgm.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Itgm
 {
@@ -38,12 +33,12 @@ namespace Itgm
         {
             _mainWindow = new MainWindow();
             _service = new Service();
-            var login = ConfigurationManager.AppSettings["login"];
-            var password = ConfigurationManager.AppSettings["password"];
-            await _service.LoginAsync(login, password);
+            //var login = ConfigurationManager.AppSettings["login"];
+            //var password = ConfigurationManager.AppSettings["password"];
+            //await _service.LoginAsync(login, password);
 
             // Отрисовываем страницу получения логина/пароля
-            ResolveViewModel(ViewTypes.Content);
+            ResolveViewModel(ViewTypes.Auth);
 
             _mainWindow.Show();
         }
