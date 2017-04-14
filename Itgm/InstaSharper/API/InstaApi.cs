@@ -176,6 +176,7 @@ namespace InstaSharper.API
         }
         #endregion
 
+        #region Media
         public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string userId, string fromId, string mode)
         {
             var mediaList = new InstaMediaList();
@@ -247,6 +248,27 @@ namespace InstaSharper.API
 
             return Result.Success(activityFeed);
         }
+        #endregion
+
+        public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync()
+        {
+            try
+            {
+                //var directInboxUri = UriCreator.GetDirectInboxUri();
+                var directInboxUri = UriCreator.GetDirectSendMessageUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directInboxUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxContainer)null);
+                var inboxResponse = JsonConvert.DeserializeObject<InstaDirectInboxContainerResponse>(json);
+                var converter = ConvertersFabric.GetDirectInboxConverter(inboxResponse);
+                return Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaDirectInboxContainer>(exception);
+            }
+        }
 
         #region sync part
         public IResult<bool> Login()
@@ -308,11 +330,6 @@ namespace InstaSharper.API
         public IResult<InstaUserList> GetCurentUserFollowers(int maxPages = 0)
         {
             return GetCurrentUserFollowersAsync(maxPages).Result;
-        }
-
-        public IResult<InstaDirectInboxContainer> GetDirectInbox()
-        {
-            return GetDirectInboxAsync().Result;
         }
 
         public IResult<InstaDirectInboxThread> GetDirectInboxThread(string threadId)
@@ -592,27 +609,6 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaMediaList) null);
-            }
-        }
-
-        public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync()
-        {
-            ValidateCurrentUser();
-            ValidateLoggedIn();
-            try
-            {
-                var directInboxUri = UriCreator.GetDirectInboxUri();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
-                var response = await _httpClient.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxContainer) null);
-                var inboxResponse = JsonConvert.DeserializeObject<InstaDirectInboxContainerResponse>(json);
-                var converter = ConvertersFabric.GetDirectInboxConverter(inboxResponse);
-                return Result.Success(converter.Convert());
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaDirectInboxContainer>(exception);
             }
         }
 

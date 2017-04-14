@@ -28,11 +28,15 @@
         public const string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
         public const string GET_USER_FOLLOWERS = API_SUFFIX + "/v1/friendships/{0}/followers/?rank_token={1}";
         public const string GET_TAG_FEED = API_SUFFIX + "/v1/feed/tag/{0}";
+
         public const string GET_RANKED_RECIPIENTS = API_SUFFIX + "/v1/direct_v2/ranked_recipients";
         public const string GET_RECENT_RECIPIENTS = API_SUFFIX + "/v1/direct_share/recent_recipients/";
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/v1/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/v1/direct_v2/inbox/";
+        //public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/visual_inbox";
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/";
+        //public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/pending_inbox";
+
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/inbox/";
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/";
         public const string LIKE_MEDIA = API_SUFFIX + "/v1/media/{0}/like/";

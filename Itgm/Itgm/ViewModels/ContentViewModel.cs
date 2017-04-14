@@ -82,6 +82,11 @@ namespace Itgm.ViewModels
                             CurrentContent = _contents[_contentIndex];
                             break;
 
+                        case ContentType.Direct:
+                            _contents[_contentIndex] = new DirectViewModel(_service);
+                            CurrentContent = _contents[_contentIndex];
+                            break;
+
                         case ContentType.None:
                             _contents[_contentIndex] = null;
                             CurrentContent = _contents[_contentIndex];

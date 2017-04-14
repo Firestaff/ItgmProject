@@ -44,6 +44,8 @@ namespace Itgm.Interfaces
         Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId);
         Task<RecentActivities> GetRecentActivityAsync(bool onlyNew);
 
+        Task<InstaDirectInboxContainer> GetDirectAsync();
+
         Task<UserInfo> UpdateCurrentUser();
     }
 }

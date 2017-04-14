@@ -122,15 +122,6 @@ namespace InstaSharper.API
         /// </returns>
         IResult<InstaMediaList> GetUserTags(string username, int maxPages);
 
-
-        /// <summary>
-        ///     Get direct inbox threads for current user
-        /// </summary>
-        /// <returns>
-        ///     <see cref="InstaDirectInboxContainer" />
-        /// </returns>
-        IResult<InstaDirectInboxContainer> GetDirectInbox();
-
         /// <summary>
         ///     Get direct inbox thread by its id
         /// </summary>

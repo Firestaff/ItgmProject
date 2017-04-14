@@ -61,6 +61,14 @@ namespace Itgm.Classes
         #endregion
         #endregion
 
+        #region Direct
+        public async Task<InstaDirectInboxContainer> GetDirectAsync()
+        {
+            var result = await _app.GetDirectInboxAsync();
+            return result.Value;
+        }
+        #endregion
+
         #region User
         public async Task<UserInfo> UpdateCurrentUser()
         {

@@ -29,6 +29,9 @@
     <DataTemplate DataType="{x:Type vm:RecentViewModel}">
         <v:RecentActivityView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:DirectViewModel}">
+        <v:RecentActivityView />
+    </DataTemplate>
 
     <!--Control templates-->
     <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">

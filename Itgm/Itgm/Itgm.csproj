@@ -66,6 +66,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ImageAsyncConverter.cs" />
     <Compile Include="ViewModels\ActivityViewModel.cs" />
+    <Compile Include="ViewModels\DirectViewModel.cs" />
     <Compile Include="ViewModels\RecentViewModel.cs" />
     <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="ViewModels\AuthenticationViewModel.cs" />
@@ -84,6 +85,9 @@
     </Compile>
     <Compile Include="Views\LongProcessControl.xaml.cs">
       <DependentUpon>LongProcessControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DirectView.xaml.cs">
+      <DependentUpon>DirectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RecentActivityView.xaml.cs">
       <DependentUpon>RecentActivityView.xaml</DependentUpon>
@@ -133,6 +137,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\CommentsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DirectView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -194,9 +202,7 @@
   <ItemGroup>
     <Resource Include="Images\background1.jpg" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\comments.ico" />
     <Resource Include="Images\lightning.ico" />

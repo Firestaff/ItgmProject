@@ -135,7 +135,12 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_TEXT_BROADCAST, out instaUri))
                 throw new Exception("Cant create URI for sending message");
-            return instaUri;
+
+
+            string query = $"thread_id=340282366841710300949128133717524366136&text=hello";
+            var uriBuilder = new UriBuilder(instaUri) { Query = query };
+
+            return uriBuilder.Uri;
         }
 
         public static Uri GetDirectInboxUri()
