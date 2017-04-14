@@ -41,8 +41,8 @@ namespace Itgm.Interfaces
         Task<IEnumerable<InstaComment>> GetOldMediaCommentsAsync(string mediaId, string fromId);
 
 
-        Task<IEnumerable<InstaMedia>> GetCurrentUserNewMediasAsync(string fromId);
-        Task<IEnumerable<InstaMedia>> GetCurrentUserOldMediasAsync(string fromId);
+        Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId);
+        Task<RecentActivities> GetRecentActivityAsync(bool onlyNew);
 
         Task<UserInfo> UpdateCurrentUser();
     }

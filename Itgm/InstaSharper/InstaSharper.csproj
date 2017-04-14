@@ -66,7 +66,7 @@
     <Compile Include="Classes\Models\Dimensions.cs" />
     <Compile Include="Classes\Models\Image.cs" />
     <Compile Include="Classes\Models\Images.cs" />
-    <Compile Include="Classes\Models\InstaActivityFeed.cs" />
+    <Compile Include="Classes\Models\RecentActivities.cs" />
     <Compile Include="Classes\Models\InstaCaption.cs" />
     <Compile Include="Classes\Models\InstaComment.cs" />
     <Compile Include="Classes\Models\InstaCommentList.cs" />
@@ -87,7 +87,6 @@
     <Compile Include="Classes\Models\InstaMediaList.cs" />
     <Compile Include="Classes\Models\InstaMediaType.cs" />
     <Compile Include="Classes\Models\InstaPosition.cs" />
-    <Compile Include="Classes\Models\InstaRecentActivityFeed.cs" />
     <Compile Include="Classes\Models\InstaRecipients.cs" />
     <Compile Include="Classes\Models\InstaStory.cs" />
     <Compile Include="Classes\Models\InstaUserList.cs" />
@@ -119,6 +118,7 @@
     <Compile Include="Converters\Json\InstaRecentActivityConverter.cs" />
     <Compile Include="Converters\Json\InstaRecipientsDataConverter.cs" />
     <Compile Include="Converters\Json\InstaThreadDataConverter.cs" />
+    <Compile Include="Converters\Json\JsonPathConverter.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />

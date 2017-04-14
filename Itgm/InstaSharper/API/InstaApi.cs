@@ -82,8 +82,8 @@ namespace InstaSharper.API
                     var userId = Convert<UserInfo>(json).Id;
                     _userSession.RankToken = $"{userId}_{_requestMessage.phone_id}";
 
-                    _userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
-                    //_userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
+                    //_userSession.LoggedInUser = (await GetUserInfoByIdAsync("11830955")).Value;
+                    _userSession.LoggedInUser = (await GetUserInfoByIdAsync(userId)).Value;
 
                     IsUserAuthenticated = true;
 
@@ -112,8 +112,10 @@ namespace InstaSharper.API
 
         public async Task<IResult<bool>> LogoutAsync()
         {
-            ValidateCurrentUser();
-            ValidateLoggedIn();
+            if (_userSession == null || _userSession.RankToken == null)
+            {
+                return Result.Success(true);
+            }
 
             try
             {
@@ -220,6 +222,32 @@ namespace InstaSharper.API
             }
         }
 
+        public async Task<IResult<RecentActivities>> GetRecentActivityAsync(bool onlyNew)
+        {
+            var uri = UriCreator.GetRecentActivityUri();
+
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
+            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+            var json = await response.Content.ReadAsStringAsync();
+
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, new RecentActivities());
+            }
+
+            var jObject = JObject.Parse(json);
+            var activityFeed = new RecentActivities();
+            activityFeed.AddRange(jObject["new_stories"].ToObject<List<RecentActivity>>());
+
+            if (!onlyNew)
+            {
+                activityFeed.AddRange(jObject["old_stories"].ToObject<List<RecentActivity>>());
+            }
+
+            return Result.Success(activityFeed);
+        }
+
         #region sync part
         public IResult<bool> Login()
         {
@@ -302,12 +330,12 @@ namespace InstaSharper.API
             return GetRankedRecipientsAsync().Result;
         }
 
-        public IResult<InstaActivityFeed> GetRecentActivity(int maxPages = 0)
+        public IResult<RecentActivities> GetRecentActivity(bool onlyNew)
         {
-            return GetRecentActivityAsync(maxPages).Result;
+            return GetRecentActivityAsync(onlyNew).Result;
         }
 
-        public IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages = 0)
+        public IResult<RecentActivities> GetFollowingRecentActivity(int maxPages = 0)
         {
             return GetFollowingRecentActivityAsync(maxPages).Result;
         }
@@ -647,16 +675,11 @@ namespace InstaSharper.API
             return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaRecipients) null);
         }
 
-        public async Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0)
+        public async Task<IResult<RecentActivities>> GetFollowingRecentActivityAsync(int maxPages = 0)
         {
-            var uri = UriCreator.GetRecentActivityUri();
-            return await GetRecentActivityInternalAsync(uri, maxPages);
-        }
-
-        public async Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0)
-        {
-            var uri = UriCreator.GetFollowingRecentActivityUri();
-            return await GetRecentActivityInternalAsync(uri, maxPages);
+            return null;
+            //var uri = UriCreator.GetFollowingRecentActivityUri();
+            //return await GetRecentActivityInternalAsync(uri, maxPages);
         }
 
         public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
@@ -816,40 +839,6 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, (InstaFollowersResponse) null);
             }
-        }
-
-        private async Task<IResult<InstaActivityFeed>> GetRecentActivityInternalAsync(Uri uri, int maxPages = 0)
-        {
-            ValidateLoggedIn();
-            if (maxPages == 0) maxPages = int.MaxValue;
-
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
-            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-            var activityFeed = new InstaActivityFeed();
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaActivityFeed) null);
-            var feedPage = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json,
-                new InstaRecentActivityConverter());
-            activityFeed.IsOwnActivity = feedPage.IsOwnActivity;
-            var nextId = feedPage.NextMaxId;
-            activityFeed.Items.AddRange(
-                feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter)
-                    .Select(converter => converter.Convert()));
-            var pages = 1;
-            while (!string.IsNullOrEmpty(nextId) && pages < maxPages)
-            {
-                var nextFollowingFeed = await GetFollowingActivityWithMaxIdAsync(nextId);
-                if (!nextFollowingFeed.Succeeded)
-                    return Result.Success($"Not all pages was downloaded: {nextFollowingFeed.Info.Message}",
-                        activityFeed);
-                nextId = nextFollowingFeed.Value.NextMaxId;
-                activityFeed.Items.AddRange(
-                    feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter)
-                        .Select(converter => converter.Convert()));
-                pages++;
-            }
-            return Result.Success(activityFeed);
         }
 
         private async Task<IResult<InstaMediaListResponse>> GetTagFeedWithMaxIdAsync(string tag, string nextId)

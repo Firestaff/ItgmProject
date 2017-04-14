@@ -20,7 +20,7 @@ namespace InstaSharper.Converters
             thread.Named = SourceObject.Named;
             thread.Pending = SourceObject.Pending;
             thread.VieweId = SourceObject.VieweId;
-            thread.LastActivity = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.LastActivity);
+            thread.LastActivity = DateTimeHelper.FromUnixSeconds(SourceObject.LastActivity);
             thread.ThreadId = SourceObject.ThreadId;
             thread.OldestCursor = thread.OldestCursor;
             thread.ThreadType = SourceObject.ThreadType;

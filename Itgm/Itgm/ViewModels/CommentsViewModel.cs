@@ -25,7 +25,6 @@ namespace Itgm.ViewModels
         /// </summary>
         private bool _isLongProcessStarted;
 
-        private UserInfo _user;
         private Timer _timer;
 
         /// <summary>
@@ -138,7 +137,6 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            _user = _service.LoggedUser;
             _timer = new Timer(60000);
             _timer.Elapsed += Timer_Elapsed;
 
@@ -158,7 +156,6 @@ namespace Itgm.ViewModels
                 _timer.Elapsed -= Timer_Elapsed;
                 _timer.Dispose();
             }
-            _user = null;
 
             Medias.Clear();
         }
@@ -186,7 +183,7 @@ namespace Itgm.ViewModels
 
             IsLongProcessStarted = true;
 
-            _user = await _service.UpdateCurrentUser();
+            //await _service.UpdateCurrentUser();
 
             var fromId = Medias.LastOrDefault()?.Pk;
             if (fromId != null)
@@ -197,7 +194,7 @@ namespace Itgm.ViewModels
                 while (true)
                 {
                     var firstId = topMedias.LastOrDefault()?.Pk; //"1375636587895080536";
-                    var newMedias = await _service.GetCurrentUserOldMediasAsync(firstId);
+                    var newMedias = await _service.GetCurrentUserMediasAsync(firstId);
                     topMedias.AddRange(newMedias);
 
                     firstEntry = topMedias.FindIndex(e => e.Pk == Medias.First().Pk);
@@ -214,7 +211,7 @@ namespace Itgm.ViewModels
 
             if (!onlyNew || Medias.Count == 0)
             {
-                var result = await _service.GetCurrentUserOldMediasAsync(fromId);
+                var result = await _service.GetCurrentUserMediasAsync(fromId);
                 var medias = result.ToList();
 
                 medias.ForEach(m => Medias.Add(new MediaViewModel(m, _service)));

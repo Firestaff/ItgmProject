@@ -33,16 +33,17 @@ namespace Itgm.Classes
         /// </summary>
         public UserInfo LoggedUser { get; private set; }
 
+
         #region Public methods
         #region Media
-        public async Task<IEnumerable<InstaMedia>> GetCurrentUserNewMediasAsync(string fromId)
-        {
-            return (await _app.GetUserMediaAsync(LoggedUser.Id, fromId, "min")).Value;
-        }
-
-        public async Task<IEnumerable<InstaMedia>> GetCurrentUserOldMediasAsync(string fromId)
+        public async Task<IEnumerable<InstaMedia>> GetCurrentUserMediasAsync(string fromId)
         {
             return (await _app.GetUserMediaAsync(LoggedUser.Id, fromId, "max")).Value;
+        }
+
+        public async Task<RecentActivities> GetRecentActivityAsync(bool onlyNew)
+        {
+            return (await _app.GetRecentActivityAsync(onlyNew)).Value;
         }
 
         #region Comments
@@ -95,6 +96,11 @@ namespace Itgm.Classes
 
         public async Task LogoutAsync()
         {
+            if (_app == null)
+            {
+                return;
+            }
+
             await _app.LogoutAsync();
         }
         #endregion

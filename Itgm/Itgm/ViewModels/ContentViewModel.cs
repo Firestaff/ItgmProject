@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Itgm.Classes;
 using Itgm.Interfaces;
 using InstaSharper.Classes.Models;
+using System.Collections.Generic;
 
 namespace Itgm.ViewModels
 {
@@ -13,33 +14,14 @@ namespace Itgm.ViewModels
     public class ContentViewModel : ResolvingViewModel
     {
         #region Fields
-
-        /// <summary>
-        /// Активное представление.
-        /// </summary>
         private BaseViewModel _currentContent;
-
-        /// <summary>
-        /// Вью модель для твитов.
-        /// </summary>
-        private CommentsViewModel _commentsViewModel;
-
-        /// <summary>
-        /// Текущий пользователь.
-        /// </summary>
+        private ContentType _contentIndex = ContentType.None;
+        private Dictionary<ContentType, BaseViewModel> _contents = new Dictionary<ContentType, BaseViewModel>();
         public UserInfo _user;
-
         #endregion
 
-        /// <summary>
-        /// Создание вью модели.
-        /// </summary>
-        /// <param name="service">Сервис.</param>
-        /// <param name="resolveView">Метод отрисовки нового представления.</param>
         public ContentViewModel(IService service, Action<ViewTypes> resolveView) : base(service, resolveView)
         {
-            _commentsViewModel = new CommentsViewModel(service);
-
             ReloginCommand = new ActionCommand(OnRelogin);
             SwitchContentCommand = new ActionCommand(OnSwitchContent);
             UpdateCommand = new ActionCommand(OnUpdateContent);
@@ -62,6 +44,49 @@ namespace Itgm.ViewModels
                 {
                     _currentContent = value;
                     OnPropertyChanged("CurrentContent");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Активное представление.
+        /// </summary>
+        public ContentType ContentIndex
+        {
+            get
+            {
+                return _contentIndex;
+            }
+            set
+            {
+                if (_contentIndex != value)
+                {
+                    _contentIndex = value;
+                    OnPropertyChanged("ContentIndex");
+
+                    if (_contents.TryGetValue(_contentIndex, out var content))
+                    {
+                        CurrentContent = content;
+                        return;
+                    }
+
+                    switch (_contentIndex)
+                    {
+                        case ContentType.MediaComments:
+                            _contents[_contentIndex] = new CommentsViewModel(_service);
+                            CurrentContent = _contents[_contentIndex];
+                            break;
+
+                        case ContentType.RecentActivity:
+                            _contents[_contentIndex] = new RecentViewModel(_service);
+                            CurrentContent = _contents[_contentIndex];
+                            break;
+
+                        case ContentType.None:
+                            _contents[_contentIndex] = null;
+                            CurrentContent = _contents[_contentIndex];
+                            break;
+                    }
                 }
             }
         }
@@ -124,10 +149,7 @@ namespace Itgm.ViewModels
         public override void InitializeViewModel()
         {
             User = _service.LoggedUser;
-
-            _commentsViewModel.InitializeViewModel();
-
-            CurrentContent = _commentsViewModel;
+            ContentIndex = ContentType.RecentActivity;
         }
 
         /// <summary>
@@ -163,5 +185,13 @@ namespace Itgm.ViewModels
         }
 
         #endregion
+
+        public enum ContentType
+        {
+            RecentActivity = 0,
+            MediaComments = 1,
+            Direct = 2,
+            None = 3,
+        }
     }
 }

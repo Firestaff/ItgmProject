@@ -75,7 +75,7 @@ namespace InstaSharper.Converters
             return new InstaDirectInboxSubscriptionConverter {SourceObject = subscription};
         }
 
-        public static IObjectConverter<InstaRecentActivityFeed, InstaRecentActivityFeedResponse>
+        public static IObjectConverter<RecentActivity, InstaRecentActivityFeedResponse>
             GetSingleRecentActivityConverter(InstaRecentActivityFeedResponse feedResponse)
         {
             return new InstaRecentActivityConverter {SourceObject = feedResponse};

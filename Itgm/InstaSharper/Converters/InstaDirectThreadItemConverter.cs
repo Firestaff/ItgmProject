@@ -25,7 +25,7 @@ namespace InstaSharper.Converters
                     break;
             }
             threadItem.Text = SourceObject.Text;
-            threadItem.TimeStamp = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.TimeStamp);
+            threadItem.TimeStamp = DateTimeHelper.FromUnixSeconds(SourceObject.TimeStamp);
             threadItem.UserId = SourceObject.UserId;
             if (SourceObject.MediaShare == null) return threadItem;
             var converter = ConvertersFabric.GetSingleMediaConverter(SourceObject.MediaShare);
