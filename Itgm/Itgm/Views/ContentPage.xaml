@@ -130,7 +130,7 @@
                 <Image Source="..\\Images/comments.ico"/>
             </ListViewItem>
             <ListViewItem>
-                <Image Source="..\\Images/comments.ico"/>
+                <Image Source="..\\Images/direct.ico"/>
             </ListViewItem>
         </ListView>
         <ContentControl Grid.Row="1" Grid.Column="1" Margin="0,5,5,5" Content="{Binding CurrentContent, Mode=OneWay}"/>

@@ -23,13 +23,26 @@ namespace InstaSharper.Converters
                 case "media_share":
                     threadItem.ItemType = InstaDirectThreadItemType.MediaShare;
                     break;
+                case "media":
+                    threadItem.ItemType = InstaDirectThreadItemType.MediaShare;
+                    break;
             }
             threadItem.Text = SourceObject.Text;
-            threadItem.TimeStamp = DateTimeHelper.FromUnixSeconds(SourceObject.TimeStamp);
+            threadItem.TimeStamp = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.TimeStamp);
             threadItem.UserId = SourceObject.UserId;
-            if (SourceObject.MediaShare == null) return threadItem;
-            var converter = ConvertersFabric.GetSingleMediaConverter(SourceObject.MediaShare);
-            threadItem.MediaShare = converter.Convert();
+
+            if (SourceObject.MediaShare != null)
+            {
+                var converter = ConvertersFabric.GetSingleMediaConverter(SourceObject.MediaShare);
+                threadItem.MediaShare = converter.Convert();
+            }
+
+            if (SourceObject.Media != null)
+            {
+                var converter = ConvertersFabric.GetSingleMediaConverter(SourceObject.Media);
+                threadItem.MediaShare = converter.Convert();
+            }
+
             return threadItem;
         }
     }

@@ -250,16 +250,23 @@ namespace InstaSharper.API
         }
         #endregion
 
+        #region Direct
         public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync()
         {
             try
             {
-                //var directInboxUri = UriCreator.GetDirectInboxUri();
-                var directInboxUri = UriCreator.GetDirectSendMessageUri();
+                var directInboxUri = UriCreator.GetDirectInboxUri();
+                //var directInboxUri = UriCreator.GetDirectSendMessageUri();
+
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directInboxUri, _deviceInfo);
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxContainer)null);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return Result.Fail("", (InstaDirectInboxContainer)null);
+                }
+
                 var inboxResponse = JsonConvert.DeserializeObject<InstaDirectInboxContainerResponse>(json);
                 var converter = ConvertersFabric.GetDirectInboxConverter(inboxResponse);
                 return Result.Success(converter.Convert());
@@ -269,6 +276,27 @@ namespace InstaSharper.API
                 return Result.Fail<InstaDirectInboxContainer>(exception);
             }
         }
+
+        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
+        {
+            try
+            {
+                var directInboxUri = UriCreator.GetDirectInboxThreadUri(threadId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxThread)null);
+                var threadResponse = JsonConvert.DeserializeObject<InstaDirectInboxThreadResponse>(json,
+                    new InstaThreadDataConverter());
+                var converter = ConvertersFabric.GetDirectThreadConverter(threadResponse);
+                return Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaDirectInboxThread>(exception);
+            }
+        }
+        #endregion
 
         #region sync part
         public IResult<bool> Login()
@@ -609,28 +637,6 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaMediaList) null);
-            }
-        }
-
-        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
-        {
-            ValidateCurrentUser();
-            ValidateLoggedIn();
-            try
-            {
-                var directInboxUri = UriCreator.GetDirectInboxThreadUri(threadId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
-                var response = await _httpClient.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxThread) null);
-                var threadResponse = JsonConvert.DeserializeObject<InstaDirectInboxThreadResponse>(json,
-                    new InstaThreadDataConverter());
-                var converter = ConvertersFabric.GetDirectThreadConverter(threadResponse);
-                return Result.Success(converter.Convert());
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaDirectInboxThread>(exception);
             }
         }
 

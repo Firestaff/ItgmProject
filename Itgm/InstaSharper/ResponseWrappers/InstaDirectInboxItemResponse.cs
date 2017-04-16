@@ -10,7 +10,7 @@ namespace InstaSharper.ResponseWrappers
         public string Text { get; set; }
 
         [JsonProperty("user_id")]
-        public long UserId { get; set; }
+        public string UserId { get; set; }
 
         [JsonProperty("timestamp")]
         public string TimeStamp { get; set; }
@@ -23,6 +23,9 @@ namespace InstaSharper.ResponseWrappers
 
         [JsonProperty("media_share")]
         public InstaMediaItemResponse MediaShare { get; set; }
+
+        [JsonProperty("media")]
+        public InstaMediaItemResponse Media { get; set; }
 
         [JsonProperty("client_context")]
         public Guid ClientContext { get; set; }

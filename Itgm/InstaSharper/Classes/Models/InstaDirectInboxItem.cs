@@ -6,7 +6,9 @@ namespace InstaSharper.Classes.Models
     {
         public string Text { get; set; }
 
-        public long UserId { get; set; }
+        public string UserId { get; set; }
+
+        public string UserName { get; set; }
 
 
         public DateTime TimeStamp { get; set; }

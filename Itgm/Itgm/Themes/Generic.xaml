@@ -30,7 +30,7 @@
         <v:RecentActivityView />
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:DirectViewModel}">
-        <v:RecentActivityView />
+        <v:DirectView />
     </DataTemplate>
 
     <!--Control templates-->

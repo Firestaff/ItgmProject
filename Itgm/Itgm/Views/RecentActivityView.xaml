@@ -17,7 +17,7 @@
 
         <ListView ItemsSource="{Binding Activity, Mode=OneTime}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                   VirtualizingPanel.ScrollUnit="Pixel"
                   BorderThickness="0,0,0,1"
                   Background="White">

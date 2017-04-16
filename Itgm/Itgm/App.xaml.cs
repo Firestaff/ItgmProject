@@ -33,8 +33,8 @@ namespace Itgm
         {
             _mainWindow = new MainWindow();
             _service = new Service();
-            //var login = ConfigurationManager.AppSettings["login"];
-            //var password = ConfigurationManager.AppSettings["password"];
+            //var login = "";
+            //var password = "";
             //await _service.LoginAsync(login, password);
 
             // Отрисовываем страницу получения логина/пароля
@@ -64,11 +64,6 @@ namespace Itgm
             {
                 switch (viewType)
                 {
-                    //case ViewTypes.GetPinCode:
-                    //    newContent = new GettingPinCodeViewModel(_service, ResolveViewModel);
-                    //    ViewModels.Add(viewType, newContent);
-                    //    break;
-
                     case ViewTypes.Auth:
                         newContent = new AuthenticationViewModel(_service, ResolveViewModel);
                         ViewModels.Add(viewType, newContent);

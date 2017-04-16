@@ -19,7 +19,7 @@ namespace InstaSharper.Converters
                 Pk = SourceObject.Pk,
                 ClientCacheKey = SourceObject.ClientCacheKey,
                 CommentsCount = SourceObject.CommentsCount,
-                DeviceTimeStap = DateTimeHelper.FromUnixSeconds(SourceObject.DeviceTimeStapUnixLike),
+                DeviceTimeStap = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.DeviceTimeStapUnixLike),
                 HasLiked = SourceObject.HasLiked,
                 PhotoOfYou = SourceObject.PhotoOfYou,
                 TrakingToken = SourceObject.TrakingToken,

@@ -34,7 +34,7 @@
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/v1/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/v1/direct_v2/inbox/";
         //public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/visual_inbox";
-        public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/";
+        public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/340282366841710300949128133717524366136";
         //public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/pending_inbox";
 
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/inbox/";

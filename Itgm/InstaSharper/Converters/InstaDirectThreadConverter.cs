@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using InstaSharper.Classes.Models;
 using InstaSharper.Helpers;
 using InstaSharper.ResponseWrappers;
@@ -20,7 +21,7 @@ namespace InstaSharper.Converters
             thread.Named = SourceObject.Named;
             thread.Pending = SourceObject.Pending;
             thread.VieweId = SourceObject.VieweId;
-            thread.LastActivity = DateTimeHelper.FromUnixSeconds(SourceObject.LastActivity);
+            thread.LastActivity = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.LastActivity);
             thread.ThreadId = SourceObject.ThreadId;
             thread.OldestCursor = thread.OldestCursor;
             thread.ThreadType = SourceObject.ThreadType;
@@ -30,22 +31,25 @@ namespace InstaSharper.Converters
                 var userConverter = ConvertersFabric.GetUserConverter(SourceObject.Inviter);
                 thread.Inviter = userConverter.Convert();
             }
+
+            thread.Users = new InstaUserList();
+            if (SourceObject.Users != null && SourceObject.Users.Count > 0)
+            {
+                foreach (var user in SourceObject.Users)
+                {
+                    var converter = ConvertersFabric.GetUserConverter(user);
+                    thread.Users.Add(converter.Convert());
+                }
+            }
             if (SourceObject.Items != null && SourceObject.Items.Count > 0)
             {
                 thread.Items = new List<InstaDirectInboxItem>();
                 foreach (var item in SourceObject.Items)
                 {
                     var converter = ConvertersFabric.GetDirectThreadItemConverter(item);
-                    thread.Items.Add(converter.Convert());
-                }
-            }
-            if (SourceObject.Users != null && SourceObject.Users.Count > 0)
-            {
-                thread.Users = new InstaUserList();
-                foreach (var user in SourceObject.Users)
-                {
-                    var converter = ConvertersFabric.GetUserConverter(user);
-                    thread.Users.Add(converter.Convert());
+                    var threadItem = converter.Convert();
+                    threadItem.UserName = thread.Users.SingleOrDefault(u => u.Id == threadItem.UserId)?.UserName;
+                    thread.Items.Add(threadItem);
                 }
             }
             return thread;

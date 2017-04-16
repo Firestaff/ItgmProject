@@ -137,7 +137,7 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for sending message");
 
 
-            string query = $"thread_id=340282366841710300949128133717524366136&text=hello";
+            string query = $"text=hello";
             var uriBuilder = new UriBuilder(instaUri) { Query = query };
 
             return uriBuilder.Uri;

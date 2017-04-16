@@ -4,6 +4,8 @@ using System.Timers;
 using System.Windows;
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Itgm.ViewModels
 {
@@ -16,6 +18,9 @@ namespace Itgm.ViewModels
         /// Показывает запущена ли длительная операция.
         /// </summary>
         private bool _isLongProcessStarted;
+        private int _pendingRequestsCount; 
+        private long _unseenCount;
+        private DirectThreadViewModel _currentThread;
 
         private Timer _timer;
 
@@ -25,21 +30,36 @@ namespace Itgm.ViewModels
         /// <param name="service">Сервис.</param>
         public DirectViewModel(IService service) : base(service, null)
         {
-            LoadActivitiesCommand = new ActionCommand(() => LoadDirectAsync(true));
-            UpdateActivitiesCommand = new ActionCommand(UpdateViewModel);
+            UpdateDirectCommand = new ActionCommand(LoadDirectAsync);
 
             InitializeViewModel();
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(() => LoadDirectAsync(true));
+            Application.Current.Dispatcher.Invoke(LoadDirectAsync);
         }
 
         #region Properties
-        /// <summary>
-        /// Показывает запущена ли длительная операция.
-        /// </summary>
+        public DirectThreadViewModel CurrentThread
+        {
+            get
+            {
+                return _currentThread;
+            }
+            set
+            {
+                if (_currentThread == value)
+                {
+                    return;
+                }
+
+                _currentThread = value;
+                _currentThread?.UpdateViewModel();
+                OnPropertyChanged("CurrentThread");
+            }
+        }
+
         public bool IsLongProcessStarted
         {
             get
@@ -67,24 +87,49 @@ namespace Itgm.ViewModels
             }
         }
 
-        /// <summary>
-        /// Коллекция твитов.
-        /// </summary>
-        public ObservableCollection<ActivityViewModel> Direct { get; private set; } 
-            = new ObservableCollection<ActivityViewModel>();
+        public int PendingRequestsCount
+        {
+            get
+            {
+                return _pendingRequestsCount;
+            }
+            private set
+            {
+                if (_pendingRequestsCount == value)
+                {
+                    return;
+                }
+
+                _pendingRequestsCount = value;
+                OnPropertyChanged("PendingRequestsCount");
+            }
+        }
+        
+        public long UnseenCount
+        {
+            get
+            {
+                return _unseenCount;
+            }
+            private set
+            {
+                if (_unseenCount == value)
+                {
+                    return;
+                }
+
+                _unseenCount = value;
+                OnPropertyChanged("UnseenCount");
+            }
+        }
+
+        public ObservableCollection<DirectThreadViewModel> DirectThreads { get; private set; } 
+            = new ObservableCollection<DirectThreadViewModel>();
 
         #endregion
 
         #region Commands
-        /// <summary>
-        /// Команда подгрузки постов.
-        /// </summary>
-        public ICommand LoadActivitiesCommand { get; private set; }
-
-        /// <summary>
-        /// Команда перезагрузки комментов.
-        /// </summary>
-        public ICommand UpdateActivitiesCommand { get; private set; }
+        public ICommand UpdateDirectCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -94,10 +139,10 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            _timer = new Timer(60000);
+            _timer = new Timer(20000);
             _timer.Elapsed += Timer_Elapsed;
 
-            LoadDirectAsync(false);
+            LoadDirectAsync();
         }
 
         /// <summary>
@@ -112,7 +157,7 @@ namespace Itgm.ViewModels
                 _timer.Dispose();
             }
 
-            Direct.Clear();
+            DirectThreads.Clear();
         }
 
         /// <summary>
@@ -120,16 +165,9 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void UpdateViewModel()
         {
-            if (IsLongProcessStarted)
-            {
-                return;
-            }
-
-            ClearViewModel();
-            InitializeViewModel();
         }
 
-        private async void LoadDirectAsync(bool onlyNew)
+        private async void LoadDirectAsync()
         {
             // Останавливаем новые запросы, пока ожидаем хотя бы один запущенный
             if (IsLongProcessStarted)
@@ -140,16 +178,31 @@ namespace Itgm.ViewModels
             IsLongProcessStarted = true;
 
             var direct = await _service.GetDirectAsync();
+            var inbox = direct.Inbox;
+            var threads = inbox.Threads;
 
-            var result = await _service.GetRecentActivityAsync(onlyNew);
-            result.Reverse();
-            result.ForEach(a => 
+            PendingRequestsCount = direct.PendingRequestsCount;
+            UnseenCount = inbox.UnseenCount;
+
+            var itemsCount = DirectThreads.Count;
+            threads.ForEach(t => 
             {
-                if (a.CommentId != null && a.Type == 1)
+                if (!DirectThreads.Any(x => x.ThreadId == t.ThreadId))
                 {
-                    Direct.Insert(0, new ActivityViewModel(a));
+                    DirectThreads.Insert(itemsCount, new DirectThreadViewModel(t, _service));
+                    itemsCount++;
                 }
             });
+
+            for (int i = 0; i < threads.Count; i++)
+            {
+                var dt = DirectThreads.Single(t => t.ThreadId == threads[i].ThreadId);
+                if (i < UnseenCount)// && dt.Messages.LastOrDefault()?.ItemId != threads[i].Items.Single().ItemId)
+                {
+                    await dt.UpdateViewModelAsync(true);
+                }
+
+            }
 
             IsLongProcessStarted = false;
         }
