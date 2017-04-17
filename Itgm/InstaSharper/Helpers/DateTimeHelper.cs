@@ -15,7 +15,7 @@ namespace InstaSharper.Helpers
         {
             try
             {
-                var time = Convert.ToDouble(unixTime, CultureInfo.GetCultureInfo("en-US"));
+                var time = Convert.ToDouble(unixTime?.Replace(',', '.'), CultureInfo.GetCultureInfo("en-US"));
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 return epoch.AddSeconds(time);
             }

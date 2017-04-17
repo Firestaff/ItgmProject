@@ -29,9 +29,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   VirtualizingPanel.ScrollUnit="Pixel"
-                  BorderThickness="0"
-                  Loaded="Medias_Loaded"
-                  Unloaded="Medias_Unloaded">
+                  BorderThickness="0">
             <ListView.Resources>
                 <Style TargetType="{x:Type ScrollBar}">
                     <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />

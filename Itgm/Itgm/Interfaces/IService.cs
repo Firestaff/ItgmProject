@@ -45,7 +45,7 @@ namespace Itgm.Interfaces
         Task<RecentActivities> GetRecentActivityAsync(bool onlyNew);
 
         Task<InstaDirectInboxContainer> GetDirectAsync();
-        Task<InstaDirectInboxThread> GetDirectThreadAsync(string threadId);
+        Task<InstaDirectInboxThread> GetDirectThreadAsync(string threadId, string fromId = null);
         
         Task<UserInfo> UpdateCurrentUser();
     }

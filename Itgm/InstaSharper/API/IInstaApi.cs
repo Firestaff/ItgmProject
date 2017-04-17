@@ -296,7 +296,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="InstaDirectInboxThread" />
         /// </returns>
-        Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
+        Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId, string fromId);
 
         /// <summary>
         ///     Get recent recipients (threads and users) asynchronously

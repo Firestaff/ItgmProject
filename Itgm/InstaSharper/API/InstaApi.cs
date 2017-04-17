@@ -277,12 +277,18 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
+        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId, string fromId = null)
         {
             try
             {
-                var directInboxUri = UriCreator.GetDirectInboxThreadUri(threadId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
+                var uri = UriCreator.GetDirectInboxThreadUri(threadId);
+                if (fromId != null)
+                {
+                    uri = new UriBuilder(uri) { Query = $"cursor={fromId}" }.Uri;
+
+                }
+
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxThread)null);

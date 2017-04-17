@@ -11,7 +11,7 @@
              MinHeight="500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="400" MaxWidth="480" Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
@@ -20,7 +20,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Grid.Column="0" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
@@ -49,11 +49,11 @@
                            FontWeight="Medium"
                            Foreground="{StaticResource TwitterAdditionalTextBrush}"
                            FontSize="16" />
-
             </Grid>
             
             <ListView ItemsSource="{Binding DirectThreads, Mode=OneTime}"
-                      Grid.Row="1"
+                      Name="Direct"
+                      Grid.Row="1" MinWidth="400" MaxWidth="480"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                       VirtualizingPanel.ScrollUnit="Pixel"
@@ -72,23 +72,21 @@
                         <Setter Property="BorderBrush" Value="{StaticResource TwitterTweetBackgroundBrush}" />
                         <Setter Property="Margin" Value="0" />
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="HorizontalAlignment" Value="Stretch" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate>
                                     <Border Name="Border"
                                             Padding="5"
                                             Background="{TemplateBinding Background}"
-                                            HorizontalAlignment="Stretch"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             BorderBrush="{TemplateBinding BorderBrush}">
-                                        <Grid Name="MainItemGrid" Height="45"
+                                        <Grid Name="MainItemGrid" Height="Auto" MinHeight="45"
                                               Background="{StaticResource TwitterTweetBackgroundBrush}"
                                               HorizontalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="45"/>
                                                 <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="45"/>
                                             </Grid.ColumnDefinitions>
                                             
                                             <Grid Grid.ColumnSpan="3" Background="#34FF4F54" Visibility="{Binding HasUnseen, Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -111,13 +109,13 @@
                                             
                                             <TextBlock Text="{Binding LastMessage}"
                                                        Grid.Column="1"
-                                                       HorizontalAlignment="Left"
+                                                       HorizontalAlignment="Stretch"
                                                        VerticalAlignment="Top"
                                                        Margin="3,20,3,0"
+                                                       TextWrapping="WrapWithOverflow"
                                                        FontWeight="Medium"
                                                        Foreground="{StaticResource TwitterAdditionalTextBrush}"
                                                        FontSize="13" />
-                                    
                                     
                                             <Border Grid.ColumnSpan="3" 
                                                     BorderThickness="0,0,0,0"
@@ -141,10 +139,10 @@
 
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    VirtualizingPanel.ScrollUnit="Pixel" />
+                        <WrapPanel Orientation="Vertical"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   VirtualizingPanel.ScrollUnit="Pixel"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
 
@@ -235,12 +233,25 @@
             </ListView.Resources>
         </ListView>
         
-        <Button Grid.Column="2" Grid.Row="1"
-                Height="40" 
-                FontSize="16"
-                Content="Обновить"
-                Style="{StaticResource DefaultButtonStyle}"
-                Command="{Binding CurrentThread.UpdateThreadCommand}"/>
+        <Grid Grid.Column="2" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Margin="3,0,0,0"
+                    Height="40" 
+                    FontSize="16"
+                    Content="Обновить"
+                    Style="{StaticResource DefaultButtonStyle}"
+                    Command="{Binding UpdateMessagesCommand}"/>
+            
+            <Button Grid.Column="1" Margin="3,0,0,0"
+                    Height="40" 
+                    FontSize="16"
+                    Content="Загрузить еще сообщений"
+                    Style="{StaticResource DefaultButtonStyle}"
+                    Command="{Binding LoadMessagesCommand}"/>
+        </Grid>
         
         <v:LongProcessControl Grid.Column="2" Grid.Row="1"
                               Visibility="{Binding CurrentThread.IsLongProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"

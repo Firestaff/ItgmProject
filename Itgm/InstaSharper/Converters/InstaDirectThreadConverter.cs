@@ -14,8 +14,8 @@ namespace InstaSharper.Converters
         {
             var thread = new InstaDirectInboxThread();
             thread.Canonical = SourceObject.Canonical;
-            thread.HasNewer = SourceObject.HasNewer;
-            thread.HasOlder = SourceObject.HasOlder;
+            //thread.HasNewer = Convert.ToBool(SourceObject.HasNewer);
+            //thread.HasOlder = true;//SourceObject.HasOlder;
             thread.IsSpam = SourceObject.IsSpam;
             thread.Muted = SourceObject.Muted;
             thread.Named = SourceObject.Named;

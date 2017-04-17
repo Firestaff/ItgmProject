@@ -68,9 +68,9 @@ namespace Itgm.Classes
             return result.Value;
         }
 
-        public async Task<InstaDirectInboxThread> GetDirectThreadAsync(string threadId)
+        public async Task<InstaDirectInboxThread> GetDirectThreadAsync(string threadId, string fromId = null)
         {
-            var result = await _app.GetDirectInboxThreadAsync(threadId);
+            var result = await _app.GetDirectInboxThreadAsync(threadId, fromId);
             return result.Value;
         }
         #endregion

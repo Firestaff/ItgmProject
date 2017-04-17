@@ -21,58 +21,58 @@ namespace Itgm.Views
             InitializeComponent();
         }
 
-        private void TweetUrlClick(object sender, RoutedEventArgs e)
-        {
-            // Открываем ссылку в браузере
-            var button = (Button)sender;
-            Uri link = new Uri(button.Content.ToString());
-            Process.Start(new ProcessStartInfo(link.AbsoluteUri));
-            e.Handled = true;
-        }
+        //private void TweetUrlClick(object sender, RoutedEventArgs e)
+        //{
+        //    // Открываем ссылку в браузере
+        //    var button = (Button)sender;
+        //    Uri link = new Uri(button.Content.ToString());
+        //    Process.Start(new ProcessStartInfo(link.AbsoluteUri));
+        //    e.Handled = true;
+        //}
 
-        private void ScrollToTop_Click(object sender, RoutedEventArgs e)
-        {
-            if (Medias.Items.Count != 0)
-            {
-                Medias.ScrollIntoView(Medias.Items[0]);
-            }
-        }
+        //private void ScrollToTop_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (Medias.Items.Count != 0)
+        //    {
+        //        Medias.ScrollIntoView(Medias.Items[0]);
+        //    }
+        //}
 
-        // Подгружаем твиты при достижении конца области скрола внизу
-        #region ScrollViewer
-        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            var count = Medias.Items.Count;
-            var offset = (int)e.VerticalOffset;
-            var maxOffset = (int)_scrollViewer.ScrollableHeight;
-            if (offset == maxOffset
-                && count != 0)
-            {
-                //AddMediasButton.Command.Execute(Medias.Items[count - 1]);
-            }
-        }
+        //// Подгружаем твиты при достижении конца области скрола внизу
+        //#region ScrollViewer
+        //private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        //{
+        //    var count = Medias.Items.Count;
+        //    var offset = (int)e.VerticalOffset;
+        //    var maxOffset = (int)_scrollViewer.ScrollableHeight;
+        //    if (offset == maxOffset
+        //        && count != 0)
+        //    {
+        //        //AddMediasButton.Command.Execute(Medias.Items[count - 1]);
+        //    }
+        //}
 
-        private void Medias_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (_scrollViewer == null)
-            {
-                var border = VisualTreeHelper.GetChild(Medias, 0);
-                _scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-            }
+        //private void Medias_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    if (_scrollViewer == null)
+        //    {
+        //        var border = VisualTreeHelper.GetChild(Medias, 0);
+        //        _scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+        //    }
 
-            if (_scrollViewer != null)
-            {
-                _scrollViewer.ScrollChanged += ScrollViewer_ScrollChanged;
-            }
-        }
+        //    if (_scrollViewer != null)
+        //    {
+        //        _scrollViewer.ScrollChanged += ScrollViewer_ScrollChanged;
+        //    }
+        //}
 
-        private void Medias_Unloaded(object sender, RoutedEventArgs e)
-        {
-            if (_scrollViewer != null)
-            {
-                _scrollViewer.ScrollChanged -= ScrollViewer_ScrollChanged;
-            }
-        }
-        #endregion
+        //private void Medias_Unloaded(object sender, RoutedEventArgs e)
+        //{
+        //    if (_scrollViewer != null)
+        //    {
+        //        _scrollViewer.ScrollChanged -= ScrollViewer_ScrollChanged;
+        //    }
+        //}
+        //#endregion
     }
 }

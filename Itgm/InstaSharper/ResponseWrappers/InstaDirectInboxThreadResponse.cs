@@ -29,7 +29,7 @@ namespace InstaSharper.ResponseWrappers
         public string ThreadId { get; set; }
 
         [JsonProperty("has_older")]
-        public bool HasOlder { get; set; }
+        public string HasOlder { get; set; }
 
         [JsonProperty("inviter")]
         public InstaUserResponse Inviter { get; set; }
@@ -44,7 +44,7 @@ namespace InstaSharper.ResponseWrappers
         public bool Canonical { get; set; }
 
         [JsonProperty("has_newer")]
-        public bool HasNewer { get; set; }
+        public string HasNewer { get; set; }
 
         [JsonProperty("is_spam")]
         public bool IsSpam { get; set; }

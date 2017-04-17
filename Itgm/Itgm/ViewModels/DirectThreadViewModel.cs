@@ -1,45 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
 using InstaSharper.Classes.Models;
 using Itgm.Interfaces;
-using Itgm.ViewModels;
-using Microsoft.Expression.Interactivity.Core;
 
 namespace Itgm.ViewModels
 {
     public class DirectThreadViewModel : BaseViewModel
     {
-        private InstaDirectInboxThread _thread;
         private IService _service;
         private string _title;
+        private string _lastMessage;
         private bool _hasUnseen;
         private bool _isLongProcessStarted;
 
         public DirectThreadViewModel(InstaDirectInboxThread thread, IService service)
         {
-            _thread = thread;
             _service = service;
+            ThreadId = thread.ThreadId;
+            thread.Users.ForEach(u => Users.Add(u));
 
-            UpdateThreadCommand = new ActionCommand(UpdateViewModel);
-
-            InitializeViewModel();
+            UpdateThreadPreview(thread, false);
         }
 
         #region Properties
-        public ObservableCollection<InstaDirectInboxItem> Messages { get; set; } 
+        public ObservableCollection<InstaDirectInboxItem> Messages { get; private set; } 
             = new ObservableCollection<InstaDirectInboxItem>();
 
-        public ObservableCollection<UserInfo> Users { get; set; }
-            = new ObservableCollection<UserInfo>();
+        public List<UserInfo> Users { get; set; } = new List<UserInfo>();
 
         public bool HasUnseen
         {
@@ -56,7 +45,23 @@ namespace Itgm.ViewModels
             }
         }
 
-        public string LastMessage { get => Messages.LastOrDefault(m => m.Text != null)?.Text; }
+        public string LastMessage
+        {
+            get
+            {
+                return _lastMessage;
+            }
+            private set
+            {
+                if (_lastMessage == value)
+                {
+                    return;
+                }
+
+                _lastMessage = value;
+                OnPropertyChanged("LastMessage");
+            }
+        }
 
         public bool IsLongProcessStarted
         {
@@ -95,16 +100,10 @@ namespace Itgm.ViewModels
         #endregion
 
         #region Commands
-        public ICommand UpdateThreadCommand { get; private set; }
         #endregion
 
         public override void InitializeViewModel()
         {
-            Title = _thread.Title;
-            ThreadId = _thread.ThreadId;
-
-            _thread.Items.ForEach(i => InsertMessage(i));
-            _thread.Users.ForEach(u => Users.Add(u));
         }
 
         public override void ClearViewModel()
@@ -115,10 +114,10 @@ namespace Itgm.ViewModels
 
         public async override void UpdateViewModel()
         {
-            await UpdateViewModelAsync(false);
+            await LoadMessagesAsync(true);
         }
 
-        public async Task UpdateViewModelAsync(bool hasUnseen)
+        public async Task LoadMessagesAsync(bool onlyNew)
         {
             if (IsLongProcessStarted)
             {
@@ -126,19 +125,56 @@ namespace Itgm.ViewModels
             }
             IsLongProcessStarted = true;
 
+            var fromId = Messages.FirstOrDefault()?.ItemId;
+            if (fromId != null)
+            {
+                bool isIntersect = false;
+                while (!isIntersect)
+                {
+                    var newMessages = await _service.GetDirectThreadAsync(ThreadId);
 
-            _thread = await _service.GetDirectThreadAsync(ThreadId);
-            ClearViewModel();
-            InitializeViewModel();
+                    if (newMessages.Items == null || newMessages.Items.Count == 0)
+                    {
+                        isIntersect = true;
+                    }
 
-            HasUnseen = hasUnseen;
-            OnPropertyChanged("LastMessage");
+                    foreach (var newItem in newMessages.Items)
+                    {
+                        if (!Messages.Any(m => m.ItemId == newItem.ItemId))
+                        {
+                            InsertMessage(newItem, true);
+                        }
+                        else
+                        {
+                            isIntersect = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
+            if (!onlyNew || Messages.Count == 0)
+            {
+                var result = await _service.GetDirectThreadAsync(ThreadId, fromId);
+                result.Items?.ForEach(i => InsertMessage(i, false));
+            }
+
+            HasUnseen = false;
             IsLongProcessStarted = false;
         }
 
-        private void InsertMessage(InstaDirectInboxItem item)
+        public void UpdateThreadPreview(InstaDirectInboxThread thread, bool hasUnseen)
         {
+            Title = thread.Title;
+            HasUnseen = hasUnseen;
+
+            var item = thread.Items[0];
+            LastMessage = item.Text ?? (item.MediaShare != null ? "Media" : "");
+        }
+
+        private void InsertMessage(InstaDirectInboxItem item, bool inTheEnd)
+        {
+            var index = inTheEnd ? Messages.Count : 0;
             if (item.Text == null && item.MediaShare == null)
             {
                 return;
@@ -149,7 +185,7 @@ namespace Itgm.ViewModels
                 item.UserName = _service.LoggedUser.UserName;
             }
 
-            Messages.Insert(0, item);
+            Messages.Insert(index, item);
         }
     }
 }

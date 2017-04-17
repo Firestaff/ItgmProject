@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Linq;
 using System.Timers;
 using System.Windows;
+using System.Windows.Input;
+
 using Microsoft.Expression.Interactivity.Core;
 using Itgm.Interfaces;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace Itgm.ViewModels
 {
@@ -31,6 +32,9 @@ namespace Itgm.ViewModels
         public DirectViewModel(IService service) : base(service, null)
         {
             UpdateDirectCommand = new ActionCommand(LoadDirectAsync);
+
+            LoadMessagesCommand = new ActionCommand(LoadMessagesAsync);
+            UpdateMessagesCommand = new ActionCommand(UpdateMessagesAsync);
 
             InitializeViewModel();
         }
@@ -130,6 +134,8 @@ namespace Itgm.ViewModels
 
         #region Commands
         public ICommand UpdateDirectCommand { get; private set; }
+        public ICommand LoadMessagesCommand { get; private set; }
+        public ICommand UpdateMessagesCommand { get; private set; }
         #endregion
 
         #region Methods
@@ -139,7 +145,7 @@ namespace Itgm.ViewModels
         /// </summary>
         public override void InitializeViewModel()
         {
-            _timer = new Timer(20000);
+            _timer = new Timer(60000);
             _timer.Elapsed += Timer_Elapsed;
 
             LoadDirectAsync();
@@ -199,12 +205,28 @@ namespace Itgm.ViewModels
                 var dt = DirectThreads.Single(t => t.ThreadId == threads[i].ThreadId);
                 if (i < UnseenCount)// && dt.Messages.LastOrDefault()?.ItemId != threads[i].Items.Single().ItemId)
                 {
-                    await dt.UpdateViewModelAsync(true);
+                    dt.UpdateThreadPreview(threads[i], true);
                 }
-
             }
 
             IsLongProcessStarted = false;
+        }
+
+        private async void LoadMessagesAsync()
+        {
+            if (CurrentThread != null)
+            {
+                await CurrentThread.LoadMessagesAsync(false);
+            }
+        }
+
+        private async void UpdateMessagesAsync()
+        {
+            if (CurrentThread != null)
+            {
+                CurrentThread.Messages.Clear();
+                await CurrentThread.LoadMessagesAsync(true);
+            }
         }
         #endregion
     }
